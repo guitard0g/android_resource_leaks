@@ -411,13 +411,15 @@ for l in lifecycles:
 
 
 has_leaks = False
+seen = set()
 for l in lifecycles:
-    if not allocation_check[l.allocator]:
+    if not allocation_check[l.allocator] and l.allocator not in seen:
         has_leaks = True
         print("Resource path not closed: ")
+        print()
         l.print_allocation_path()
-    # else:
-    #     l.print_lifecycle()
+        seen.add(l.allocator)
+
 
 if not has_leaks:
     print("All good!")
