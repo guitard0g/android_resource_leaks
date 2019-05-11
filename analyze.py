@@ -18,10 +18,6 @@ from callback_list import callback_list as android_callback_list
 show_logging(logging.FATAL)
 
 
-def format_activity_name(name):
-    return "L" + name.replace('.', '/') + ";"
-
-
 apk_file = str(input("Input name of apk: ")).strip()
 
 print("Decompiling APK...")
@@ -32,9 +28,11 @@ cg = dx.get_call_graph()
 print("Getting syntax tree...")
 machine = DvMachine(apk_file)
 
-# get the main activity
-main_act = format_activity_name(apk_obj.get_main_activity())
-main_analysis: ClassAnalysis = dx.get_class_analysis(main_act)
+ast = machine.get_ast()
+
+
+def format_activity_name(name):
+    return "L" + name.replace('.', '/') + ";"
 
 
 def get_method_from_ast(class_ast, name):
@@ -97,9 +95,6 @@ def get_method_invocations(ast):
             if isinstance(item, list):
                 ret.extend(get_method_invocations(item))
     return ret
-
-
-ast = machine.get_ast()
 
 
 def get_registered_callbacks(classname,
@@ -177,44 +172,6 @@ def get_cb_methods():
     return interface_to_methods
 
 
-print("Analyzing callbacks...")
-cbs = get_registered_callbacks(main_act, "onCreate")
-cb_methods = get_cb_methods()
-
-on_create_search = dx.find_methods(classname=main_act, methodname="onCreate$")
-on_create: MethodClassAnalysis
-for item in on_create_search:
-    on_create = item
-on_create_enc = on_create.method
-
-found_methods = list()
-
-for cb_typ, cb_interface in cbs:
-    if cb_interface in cb_methods:
-        java_interface: JavaInterface = cb_methods[cb_interface]
-    else:
-        continue
-    interface_method: JavaMethod
-
-    for interface_method in java_interface.methods:
-        gen = dx.find_methods(classname=cb_typ, methodname=".*{}.*".format(interface_method.name))
-        analysis: MethodClassAnalysis
-        found = False
-        for item in gen:
-            analysis = item
-            found = True
-        if found:
-            found_methods.append(analysis.method)
-
-for method_enc in found_methods:
-    print("adding edge: ", on_create_enc.name, " -> ", method_enc.name)
-    cg.add_edge(on_create_enc, method_enc)
-
-
-closers = dx.find_methods(methodname="^(end|abandon|cancel|clear|close|disable|finish|recycle|release|remove|stop|unload|unlock|unmount|unregister).*")
-openers = dx.find_methods(methodname="^(start|request|lock|open|register|acquire|vibrate|enable).*")
-
-
 def find_onCreate(analysis: ClassAnalysis) -> MethodClassAnalysis:
     meth: MethodClassAnalysis
     for meth in analysis.get_methods():
@@ -280,37 +237,10 @@ def search_cfg(method: MethodClassAnalysis) -> None:
         seen_methods.add(method.full_name)
         for _, call, _ in method.get_xref_to():
             for i in dx.find_methods(methodname=call.name, classname=call.class_name):
-                # if i.full_name in opener_names:
-                #     print("opener: ", i.full_name)
-                # if i.full_name in closer_names:
-                #     print("closer: ", i.full_name)
                 searched_cfg = True
                 search_cfg(i, set(seen_methods))
     if not searched_cfg:
         print(len(seen_methods))
-
-
-seen_methods = set()
-
-on_create_analysis = find_method(main_analysis, "onCreate")
-on_create_method: EncodedMethod = on_create_analysis.method
-
-on_pause_analysis = find_method(main_analysis, "onPause")
-on_pause_method = None
-if on_pause_analysis:
-    on_pause_method: EncodedMethod = on_pause_analysis.method
-
-on_stop_analysis = find_method(main_analysis, "onStop")
-on_stop_method = None
-if on_stop_analysis:
-    on_stop_method: EncodedMethod = on_stop_analysis.method
-
-on_destroy_analysis = find_method(main_analysis, "onDestroy")
-on_destroy_method = None
-if on_destroy_analysis:
-    on_destroy_method: EncodedMethod = on_destroy_analysis.method
-
-exit_methods = [on_pause_method, on_stop_method, on_destroy_method]
 
 
 def add_cg_link(m1, m2):
@@ -388,6 +318,71 @@ class ResourceLifecycle(object):
                 self.deallocator.name) + ", Branch: " + str(
                     self.allocation_caller.name) + " -> " + str(
                         self.allocator.name)
+
+
+# get the main activity
+main_act = format_activity_name(apk_obj.get_main_activity())
+main_analysis: ClassAnalysis = dx.get_class_analysis(main_act)
+
+print("Analyzing callbacks...")
+cbs = get_registered_callbacks(main_act, "onCreate")
+cb_methods = get_cb_methods()
+
+on_create_search = dx.find_methods(classname=main_act, methodname="onCreate$")
+on_create: MethodClassAnalysis
+for item in on_create_search:
+    on_create = item
+on_create_enc = on_create.method
+
+found_methods = list()
+
+for cb_typ, cb_interface in cbs:
+    if cb_interface in cb_methods:
+        java_interface: JavaInterface = cb_methods[cb_interface]
+    else:
+        continue
+    interface_method: JavaMethod
+
+    for interface_method in java_interface.methods:
+        gen = dx.find_methods(classname=cb_typ, methodname=".*{}.*".format(interface_method.name))
+        analysis: MethodClassAnalysis
+        found = False
+        for item in gen:
+            analysis = item
+            found = True
+        if found:
+            found_methods.append(analysis.method)
+
+for method_enc in found_methods:
+    print("adding edge: ", on_create_enc.name, " -> ", method_enc.name)
+    cg.add_edge(on_create_enc, method_enc)
+
+
+closers = dx.find_methods(methodname="^(end|abandon|cancel|clear|close|disable|finish|recycle|release|remove|stop|unload|unlock|unmount|unregister).*")
+openers = dx.find_methods(methodname="^(start|request|lock|open|register|acquire|vibrate|enable).*")
+
+
+seen_methods = set()
+
+on_create_analysis = find_method(main_analysis, "onCreate")
+on_create_method: EncodedMethod = on_create_analysis.method
+
+on_pause_analysis = find_method(main_analysis, "onPause")
+on_pause_method = None
+if on_pause_analysis:
+    on_pause_method: EncodedMethod = on_pause_analysis.method
+
+on_stop_analysis = find_method(main_analysis, "onStop")
+on_stop_method = None
+if on_stop_analysis:
+    on_stop_method: EncodedMethod = on_stop_analysis.method
+
+on_destroy_analysis = find_method(main_analysis, "onDestroy")
+on_destroy_method = None
+if on_destroy_analysis:
+    on_destroy_method: EncodedMethod = on_destroy_analysis.method
+
+exit_methods = [on_pause_method, on_stop_method, on_destroy_method]
 
 
 # find entrypoint -> opener paths
