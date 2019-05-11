@@ -1,6 +1,5 @@
 import logging
 import re
-import sys
 from collections import defaultdict
 from pprint import pprint
 from typing import Union
@@ -11,7 +10,7 @@ from androguard.core.analysis.analysis import (ClassAnalysis, ExternalMethod,
                                                MethodClassAnalysis)
 from androguard.core.androconf import show_logging
 from androguard.core.bytecodes.dvm import EncodedMethod
-from androguard.decompiler.dad.decompile import DvMachine, DvMethod
+from androguard.decompiler.dad.decompile import DvMachine
 from networkx import shortest_simple_paths
 
 from callback_list import callback_list as android_callback_list
@@ -23,18 +22,20 @@ def format_activity_name(name):
     return "L" + name.replace('.', '/') + ";"
 
 
-apk_file = "./app-debug.apk"
+apk_file = str(input("Input name of apk: ")).strip()
 
-# apk_obj, dalv_format, dx = misc.AnalyzeAPK("./app-release-unsigned.apk")
+print("Decompiling APK...")
 apk_obj, dalv_format, dx = misc.AnalyzeAPK(apk_file)
 
 cg = dx.get_call_graph()
 
+print("Getting syntax tree...")
 machine = DvMachine(apk_file)
 
 # get the main activity
 main_act = format_activity_name(apk_obj.get_main_activity())
 main_analysis: ClassAnalysis = dx.get_class_analysis(main_act)
+
 
 def get_method_from_ast(class_ast, name):
     for method in class_ast['methods']:
@@ -99,19 +100,6 @@ def get_method_invocations(ast):
 
 
 ast = machine.get_ast()
-# takepic_ast_body = get_method_from_ast(ast[main_act], 'takePicture')['body']
-# main_ast_body = get_method_from_ast(ast[main_act], 'onCreate')['body']
-# for method_ast in get_class_methods_ast(ast[main_act]):
-#     # print("Invocations in: ", get_method_name_from_ast(method_ast))
-#     method_invocs = get_method_invocations(method_ast['body'])
-#     for invoc in method_invocs:
-#         print("Method triple: ", invoc[2])
-#         arg_types = get_method_arg_type(invoc)
-#         # print("\t", arg_types)
-#         for typ in arg_types:
-#             cls: ClassAnalysis = dx.get_class_analysis(typ)
-#             if isinstance(cls, ClassAnalysis):
-#                 print("class " + typ + " implements: ", cls.implements)
 
 
 def get_registered_callbacks(classname,
@@ -128,6 +116,7 @@ def get_registered_callbacks(classname,
             if isinstance(cls, ClassAnalysis):
                 for interface in cls.implements:
                     if interface in callback_list:
+                        print("Found registered resource: ", typ, "implements ", interface)
                         registered_callbacks.append((typ, interface))
     return registered_callbacks
 
@@ -188,6 +177,7 @@ def get_cb_methods():
     return interface_to_methods
 
 
+print("Analyzing callbacks...")
 cbs = get_registered_callbacks(main_act, "onCreate")
 cb_methods = get_cb_methods()
 
@@ -200,20 +190,25 @@ on_create_enc = on_create.method
 found_methods = list()
 
 for cb_typ, cb_interface in cbs:
-    java_interface: JavaInterface = cb_methods[cb_interface]
+    if cb_interface in cb_methods:
+        java_interface: JavaInterface = cb_methods[cb_interface]
+    else:
+        continue
     interface_method: JavaMethod
 
     for interface_method in java_interface.methods:
         gen = dx.find_methods(classname=cb_typ, methodname=".*{}.*".format(interface_method.name))
         analysis: MethodClassAnalysis
+        found = False
         for item in gen:
             analysis = item
-        found_methods.append(analysis.method)
+            found = True
+        if found:
+            found_methods.append(analysis.method)
 
 for method_enc in found_methods:
-    print("adding edge: ", on_create_enc, " -> ", method_enc)
+    print("adding edge: ", on_create_enc.name, " -> ", method_enc.name)
     cg.add_edge(on_create_enc, method_enc)
-
 
 
 closers = dx.find_methods(methodname="^(end|abandon|cancel|clear|close|disable|finish|recycle|release|remove|stop|unload|unlock|unmount|unregister).*")
@@ -225,6 +220,31 @@ def find_onCreate(analysis: ClassAnalysis) -> MethodClassAnalysis:
     for meth in analysis.get_methods():
         if meth.name == 'onCreate':
             return meth
+    return None
+
+
+def find_onPause(analysis: ClassAnalysis) -> MethodClassAnalysis:
+    meth: MethodClassAnalysis
+    for meth in analysis.get_methods():
+        if meth.name == 'onPause':
+            return meth
+    return None
+
+
+def find_onStop(analysis: ClassAnalysis) -> MethodClassAnalysis:
+    meth: MethodClassAnalysis
+    for meth in analysis.get_methods():
+        if meth.name == 'onStop':
+            return meth
+    return None
+
+
+def find_onDestroy(analysis: ClassAnalysis) -> MethodClassAnalysis:
+    meth: MethodClassAnalysis
+    for meth in analysis.get_methods():
+        if meth.name == 'onDestroy':
+            return meth
+    return None
 
 
 def find_getCam(analysis: ClassAnalysis) -> MethodClassAnalysis:
@@ -258,164 +278,146 @@ def search_cfg(method: MethodClassAnalysis) -> None:
         print(len(seen_methods))
 
 
-# def search_cg(method: MethodClassAnalysis) -> None:
-
-# import pdb; pdb.set_trace()
-
 seen_methods = set()
-
-# for field in main_analysis.get_fields():
-#     if field.name == 'mPreview':
-#         pdb.set_trace()
 
 on_create_analysis = find_onCreate(main_analysis)
 on_create_method: EncodedMethod = on_create_analysis.method
-# for _, call, _ in on_create_analysis.get_xref_to():
-#     for i in dx.find_methods(methodname=call.name, classname=call.class_name):
-#         pass
-#     if call.name == 'addView':
-#         pdb.set_trace()
+
+on_pause_analysis = find_onPause(main_analysis)
+on_pause_method = None
+if on_pause_analysis:
+    on_pause_method: EncodedMethod = on_pause_analysis.method
+
+on_stop_analysis = find_onStop(main_analysis)
+on_stop_method = None
+if on_stop_analysis:
+    on_stop_method: EncodedMethod = on_stop_analysis.method
+
+on_destroy_analysis = find_onDestroy(main_analysis)
+on_destroy_method = None
+if on_destroy_analysis:
+    on_destroy_method: EncodedMethod = on_destroy_analysis.method
 
 
-class SourceSink(object):
-    def __init__(self, source, sink):
-        self.paths = []
-        self.source = source
-        self.sink = sink
-        self.pre_sinks = list()
-
-    def add_path(self, path):
-        self.pre_sinks.append(path[-2])
-        self.paths.append(path)
-
-    def __repr__(self):
-        return "Source: " + str(self.source.name) + ", Sink: " + str(self.sink.name)
+def add_cg_link(m1, m2):
+    if m1 and m2:
+        cg.add_edge(m1, m2)
 
 
 class ResourceLifecycle(object):
-    def __init__(self, source, allocator, deallocator, allocator_branch):
+    def __init__(self,
+                 source=None,
+                 allocator=None,
+                 deallocator=None,
+                 allocation_caller=None,
+                 allocation_path=None,
+                 deallocation_path=None):
         self.source = source
         self.allocator = allocator
         self.deallocator = deallocator
-        self.allocation_branch = allocator_branch
-        self.allocation_path = list()
-        self.deallocation_path = list()
+        self.allocation_caller = allocation_caller
+        self.allocation_path = allocation_path
+        self.deallocation_path = deallocation_path
+
+    def add_deallocation_path(self, path_generator):
+        try:
+            for path in path_generator:
+                self.deallocator = path[-1]
+                self.deallocation_path = path
+        except Exception:
+            pass
+
+    def is_closed(self):
+        if not self.deallocation_path:
+            return False
+        else:
+            return True
 
     def get_full_path(self):
         return self.allocation_path[:-1] + self.deallocation_path
+
+    def print_lifecycle(self):
+        assert self.source is not None
+        assert self.allocator is not None
+        assert self.deallocator is not None
+        assert self.allocation_caller is not None
+        assert self.allocation_path is not None
+        assert self.deallocation_path is not None
+        if not self.is_closed():
+            print("Resource not closed: ", self.allocator)
+        else:
+            print("PATH: ")
+            for item in self.allocation_path[:-2]:
+                print(item.name)
+                print("↓")
+            print(self.allocation_caller.name, " → ", self.allocator.name)
+            for item in self.deallocation_path[1:]:
+                print("↓")
+                print(item.name)
+
+    def print_allocation_path(self):
+        assert self.allocation_path is not None
+        print("PATH: ")
+        for item in self.allocation_path[:-1]:
+            print(item.name)
+            print("↓")
+        print(self.allocation_path[-1])
 
     def __repr__(self):
         return str(self.source.name) + " -> " + str(
             self.allocator.name) + " -> " + str(
                 self.deallocator.name) + ", Branch: " + str(
-                    self.allocation_branch[0].name) + " -> " + str(
-                        self.allocation_branch[1].name)
+                    self.allocation_caller.name) + " -> " + str(
+                        self.allocator.name)
 
 
 # find entrypoint -> opener paths
 # source/sink traversal
+print("Searching for entrypoint -> resource request paths")
 path_generators = []
 for opener in openers:
     for methodAnal in main_analysis.get_methods():
         path_generators.append(shortest_simple_paths(cg, methodAnal.method, opener.method))
 
-on_create_source_sinks = []
+lifecycles = []
 for gen in path_generators:
     empty = True
     try:
         for path in gen:
-            if empty:
-                ss = SourceSink(path[0], path[-1])
-                empty = False
-            ss.add_path(path)
-        on_create_source_sinks.append(ss)
+            lifecycles.append(
+                ResourceLifecycle(
+                    source=path[0],
+                    allocator=path[-1],
+                    allocation_caller=path[-2],
+                    allocation_path=path))
     except Exception:
         continue
 
 opener_re = re.compile("^(start|request|lock|open|register|acquire|vibrate|enable)")
 
-path_generators = []
-ss: SourceSink
-for ss in on_create_source_sinks:
-    sink = str(ss.sink.name)
-    classname = ss.sink.get_class_name()
-    suffix = opener_re.sub('', sink)
-    # print(ss.sink)
-    matches = dx.find_methods(methodname="^(end|abandon|cancel|clear|close|disable|finish|recycle|release|remove|stop|unload|unlock|unmount|unregister)" + suffix + "$", classname=classname)
+allocation_check = defaultdict(lambda: False)
+print("Searching for resource request -> resource release paths")
+for l in lifecycles:
+    classname = l.allocator.get_class_name()
+    suffix = opener_re.sub('', l.allocator.name)
+    matches = dx.find_methods(
+        methodname=
+        "^(end|abandon|cancel|clear|close|disable|finish|recycle|release|remove|stop|unload|unlock|unmount|unregister)"
+        + suffix + "$",
+        classname=classname)
     for match in matches:
-        # print("checking: ", classname, ss.sink.name, match.method.name)
-        for pre_sink in ss.pre_sinks:
-            path_generators.append((ss, shortest_simple_paths(cg, pre_sink, match.method)))
-
-opener_source_sinks = []
-for allocation_ss, gen in path_generators:
-    empty = True
-    try:
-        for path in gen:
-            if empty:
-                deallocation_ss = SourceSink(path[0], path[-1])
-                empty = False
-            deallocation_ss.add_path(path)
-        opener_source_sinks.append((allocation_ss, deallocation_ss))
-    except Exception:
-        continue
-
-lifecycles = []
-for alloc, dealloc in opener_source_sinks:
-    for alloc_path in alloc.paths:
-        for dealloc_path in dealloc.paths:
-            if dealloc.sink.name == 'stopPreview':
-                lifecycle = ResourceLifecycle(alloc.source, alloc.sink, dealloc.sink, (dealloc.source, alloc.sink))
-                lifecycle.allocation_path = alloc_path[:-1]
-                lifecycle.deallocation_path = dealloc_path
-                lifecycles.append(lifecycle)
-
-for lifecycle in lifecycles:
-    print(lifecycle)
-    print(lifecycle.get_full_path())
+        l.add_deallocation_path(shortest_simple_paths(cg, l.allocation_caller, match.method))
+    allocation_check[l.allocator] = allocation_check[l.allocator] or l.is_closed
 
 
-# SCRATCH SPACE
+has_leaks = False
+for l in lifecycles:
+    if not allocation_check[l.allocator]:
+        has_leaks = True
+        print("Resource path not closed: ")
+        l.print_allocation_path()
+    # else:
+    #     l.print_lifecycle()
 
-# for method in main_analysis.get_methods():
-#     print('searching method: ', method.full_name)
-#     seen_methods = set()
-#     search_cfg(method, seen_methods)
-
-
-# search_cfg(on_create_analysis)
-# print(len(seen_methods))
-
-# https://source.android.com/devices/tech/dalvik/dex-format#access-flags
-# ACCESS_FLAGS = {
-#     0x1: 'public',
-#     0x2: 'private',
-#     0x4: 'protected',
-#     0x8: 'static',
-#     0x10: 'final',
-#     0x20: 'synchronized',
-#     0x40: 'bridge',
-#     0x80: 'varargs',
-#     0x100: 'native',
-#     0x200: 'interface',
-#     0x400: 'abstract',
-#     0x800: 'strictfp',
-#     0x1000: 'synthetic',
-#     0x4000: 'enum',
-#     0x8000: 'unused',
-#     0x10000: 'constructor',
-#     0x20000: 'synchronized',
-# }
-
-# https://source.android.com/devices/tech/dalvik/dex-format#typedescriptor
-# TYPE_DESCRIPTOR = {
-#     'V': 'void',
-#     'Z': 'boolean',
-#     'B': 'byte',
-#     'S': 'short',
-#     'C': 'char',
-#     'I': 'int',
-#     'J': 'long',
-#     'F': 'float',
-#     'D': 'double',
-# }
+if not has_leaks:
+    print("All good!")
