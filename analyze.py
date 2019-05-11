@@ -172,48 +172,12 @@ def get_cb_methods():
     return interface_to_methods
 
 
-def find_onCreate(analysis: ClassAnalysis) -> MethodClassAnalysis:
-    meth: MethodClassAnalysis
-    for meth in analysis.get_methods():
-        if meth.name == 'onCreate':
-            return meth
-    return None
-
-
-def find_onPause(analysis: ClassAnalysis) -> MethodClassAnalysis:
-    meth: MethodClassAnalysis
-    for meth in analysis.get_methods():
-        if meth.name == 'onPause':
-            return meth
-    return None
-
-
-def find_onStop(analysis: ClassAnalysis) -> MethodClassAnalysis:
-    meth: MethodClassAnalysis
-    for meth in analysis.get_methods():
-        if meth.name == 'onStop':
-            return meth
-    return None
-
-
-def find_onDestroy(analysis: ClassAnalysis) -> MethodClassAnalysis:
-    meth: MethodClassAnalysis
-    for meth in analysis.get_methods():
-        if meth.name == 'onDestroy':
-            return meth
-    return None
-
-
 def find_method(analysis: ClassAnalysis, name: str) -> MethodClassAnalysis:
     meth: MethodClassAnalysis
     for meth in analysis.get_methods():
         if meth.name == name:
             return meth
-    parent = dx.get_class_analysis(analysis.extends)
-    if parent:
-        return find_method(parent, name)
-    else:
-        return None
+    return None
 
 
 def find_getCam(analysis: ClassAnalysis) -> MethodClassAnalysis:
@@ -269,12 +233,13 @@ class ResourceLifecycle(object):
         self.deallocation_path = deallocation_path
 
     def add_deallocation_path(self, path_generator):
-        try:
-            for path in path_generator:
-                self.deallocator = path[-1]
-                self.deallocation_path = path
-        except Exception:
-            pass
+            try:
+                for path in path_generator:
+                    self.deallocator = path[-1]
+                    self.deallocation_path = path
+                    break
+            except Exception:
+                pass
 
     def is_closed(self):
         if not self.deallocation_path:
@@ -382,7 +347,13 @@ on_destroy_method = None
 if on_destroy_analysis:
     on_destroy_method: EncodedMethod = on_destroy_analysis.method
 
-exit_methods = [on_pause_method, on_stop_method, on_destroy_method]
+exit_methods = []
+if on_pause_method:
+    exit_methods.append(on_pause_method)
+if on_stop_method:
+    exit_methods.append(on_stop_method)
+if on_destroy_method:
+    exit_methods.append(on_destroy_method)
 
 
 # find entrypoint -> opener paths
