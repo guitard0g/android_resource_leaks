@@ -407,7 +407,7 @@ for l in lifecycles:
         classname=classname)
     for match in matches:
         l.add_deallocation_path(shortest_simple_paths(cg, l.allocation_caller, match.method))
-    allocation_check[l.allocator] = allocation_check[l.allocator] or l.is_closed
+    allocation_check[l.allocator] = allocation_check[l.allocator] or l.is_closed()
 
 
 has_leaks = False
