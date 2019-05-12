@@ -1,0 +1,2380 @@
+INTERFACE
+Landroid/hardware/input/InputManager$InputDeviceListener;
+METHOD
+onInputDeviceAdded
+RETURN TYPE
+void
+ARG TYPE
+int
+METHOD
+onInputDeviceRemoved
+RETURN TYPE
+void
+ARG TYPE
+int
+METHOD
+onInputDeviceChanged
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/view/View$OnFocusChangeListener;
+METHOD
+onFocusChange
+RETURN TYPE
+void
+ARG TYPE
+View
+ARG TYPE
+boolean
+INTERFACE
+Landroid/net/wifi/p2p/WifiP2pManager$GroupInfoListener;
+METHOD
+onGroupInfoAvailable
+RETURN TYPE
+void
+ARG TYPE
+WifiP2pGroup
+INTERFACE
+Landroid/view/MenuItem$OnMenuItemClickListener;
+METHOD
+onMenuItemClick
+RETURN TYPE
+boolean
+ARG TYPE
+MenuItem
+INTERFACE
+Landroid/widget/CalendarView$OnDateChangeListener;
+METHOD
+onSelectedDayChange
+RETURN TYPE
+void
+ARG TYPE
+CalendarView
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/view/MenuItem$OnActionExpandListener;
+METHOD
+onMenuItemActionExpand
+RETURN TYPE
+boolean
+ARG TYPE
+MenuItem
+METHOD
+onMenuItemActionCollapse
+RETURN TYPE
+boolean
+ARG TYPE
+MenuItem
+INTERFACE
+Landroid/app/FragmentBreadCrumbs$OnBreadCrumbClickListener;
+METHOD
+onBreadCrumbClick
+RETURN TYPE
+boolean
+ARG TYPE
+BackStackEntry
+ARG TYPE
+int
+INTERFACE
+Landroid/content/Loader$OnLoadCompleteListener;
+METHOD
+onLoadComplete
+RETURN TYPE
+void
+ARG TYPE
+Loader<D>
+ARG TYPE
+D
+INTERFACE
+Landroid/view/ViewTreeObserver$OnScrollChangedListener;
+METHOD
+onScrollChanged
+RETURN TYPE
+void
+INTERFACE
+Landroid/view/View$OnAttachStateChangeListener;
+METHOD
+onViewAttachedToWindow
+RETURN TYPE
+void
+ARG TYPE
+View
+METHOD
+onViewDetachedFromWindow
+RETURN TYPE
+void
+ARG TYPE
+View
+INTERFACE
+Landroid/app/SearchManager$OnCancelListener;
+METHOD
+onCancel
+RETURN TYPE
+void
+INTERFACE
+Landroid/widget/NumberPicker$OnValueChangeListener;
+METHOD
+onValueChange
+RETURN TYPE
+void
+ARG TYPE
+NumberPicker
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/widget/PopupMenu$OnMenuItemClickListener;
+METHOD
+onMenuItemClick
+RETURN TYPE
+boolean
+ARG TYPE
+MenuItem
+INTERFACE
+Landroid/net/wifi/p2p/WifiP2pManager$ActionListener;
+METHOD
+onSuccess
+RETURN TYPE
+void
+METHOD
+onFailure
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/view/accessibility/AccessibilityManager$AccessibilityStateChangeListener;
+METHOD
+onAccessibilityStateChanged
+RETURN TYPE
+void
+ARG TYPE
+boolean
+INTERFACE
+Landroid/widget/AbsListView$MultiChoiceModeListener;
+METHOD
+onItemCheckedStateChanged
+RETURN TYPE
+void
+ARG TYPE
+ActionMode
+ARG TYPE
+int
+ARG TYPE
+long
+ARG TYPE
+boolean
+INTERFACE
+Landroid/widget/SearchView$OnCloseListener;
+METHOD
+onClose
+RETURN TYPE
+boolean
+INTERFACE
+Landroid/content/DialogInterface$OnShowListener;
+METHOD
+onShow
+RETURN TYPE
+void
+ARG TYPE
+DialogInterface
+INTERFACE
+Landroid/widget/TextView$OnEditorActionListener;
+METHOD
+onEditorAction
+RETURN TYPE
+boolean
+ARG TYPE
+TextView
+ARG TYPE
+int
+ARG TYPE
+KeyEvent
+INTERFACE
+Landroid/widget/Chronometer$OnChronometerTickListener;
+METHOD
+onChronometerTick
+RETURN TYPE
+void
+ARG TYPE
+Chronometer
+INTERFACE
+Landroid/content/DialogInterface$OnClickListener;
+METHOD
+onClick
+RETURN TYPE
+void
+ARG TYPE
+DialogInterface
+ARG TYPE
+int
+INTERFACE
+Landroid/view/ViewTreeObserver$OnTouchModeChangeListener;
+METHOD
+onTouchModeChanged
+RETURN TYPE
+void
+ARG TYPE
+boolean
+INTERFACE
+Landroid/widget/ShareActionProvider$OnShareTargetSelectedListener;
+METHOD
+onShareTargetSelected
+RETURN TYPE
+boolean
+ARG TYPE
+ShareActionProvider
+ARG TYPE
+Intent
+INTERFACE
+Landroid/media/audiofx/Virtualizer$OnParameterChangeListener;
+METHOD
+onParameterChange
+RETURN TYPE
+void
+ARG TYPE
+Virtualizer
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+short
+INTERFACE
+Landroid/widget/SlidingDrawer$OnDrawerOpenListener;
+METHOD
+onDrawerOpened
+RETURN TYPE
+void
+INTERFACE
+Landroid/widget/TimePicker$OnTimeChangedListener;
+METHOD
+onTimeChanged
+RETURN TYPE
+void
+ARG TYPE
+TimePicker
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/content/SyncStatusObserver;
+METHOD
+onStatusChanged
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/content/ComponentCallbacks2;
+METHOD
+onTrimMemory
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/media/AudioRecord$OnRecordPositionUpdateListener;
+METHOD
+onMarkerReached
+RETURN TYPE
+void
+ARG TYPE
+AudioRecord
+METHOD
+onPeriodicNotification
+RETURN TYPE
+void
+ARG TYPE
+AudioRecord
+INTERFACE
+Landroid/media/AudioManager$OnAudioFocusChangeListener;
+METHOD
+onAudioFocusChange
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/preference/PreferenceManager$OnActivityStopListener;
+METHOD
+onActivityStop
+RETURN TYPE
+void
+INTERFACE
+Landroid/view/View$OnClickListener;
+METHOD
+onClick
+RETURN TYPE
+void
+ARG TYPE
+View
+INTERFACE
+Landroid/gesture/GestureOverlayView$OnGestureListener;
+METHOD
+onGestureStarted
+RETURN TYPE
+void
+ARG TYPE
+GestureOverlayView
+ARG TYPE
+MotionEvent
+METHOD
+onGesture
+RETURN TYPE
+void
+ARG TYPE
+GestureOverlayView
+ARG TYPE
+MotionEvent
+METHOD
+onGestureEnded
+RETURN TYPE
+void
+ARG TYPE
+GestureOverlayView
+ARG TYPE
+MotionEvent
+METHOD
+onGestureCancelled
+RETURN TYPE
+void
+ARG TYPE
+GestureOverlayView
+ARG TYPE
+MotionEvent
+INTERFACE
+Landroid/hardware/Camera$AutoFocusCallback;
+METHOD
+onAutoFocus
+RETURN TYPE
+void
+ARG TYPE
+boolean
+ARG TYPE
+Camera
+INTERFACE
+Landroid/widget/CompoundButton$OnCheckedChangeListener;
+METHOD
+onCheckedChanged
+RETURN TYPE
+void
+ARG TYPE
+CompoundButton
+ARG TYPE
+boolean
+INTERFACE
+Landroid/app/FragmentManager$OnBackStackChangedListener;
+METHOD
+onBackStackChanged
+RETURN TYPE
+void
+INTERFACE
+Landroid/hardware/display/DisplayManager$DisplayListener;
+METHOD
+onDisplayAdded
+RETURN TYPE
+void
+ARG TYPE
+int
+METHOD
+onDisplayRemoved
+RETURN TYPE
+void
+ARG TYPE
+int
+METHOD
+onDisplayChanged
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/net/wifi/p2p/WifiP2pManager$ServiceResponseListener;
+METHOD
+onServiceAvailable
+RETURN TYPE
+void
+ARG TYPE
+int
+ARG TYPE
+byte[]
+ARG TYPE
+WifiP2pDevice
+INTERFACE
+Landroid/os/CancellationSignal$OnCancelListener;
+METHOD
+onCancel
+RETURN TYPE
+void
+INTERFACE
+Landroid/app/SearchManager$OnDismissListener;
+METHOD
+onDismiss
+RETURN TYPE
+void
+INTERFACE
+Landroid/net/wifi/p2p/WifiP2pManager$UpnpServiceResponseListener;
+METHOD
+onUpnpServiceAvailable
+RETURN TYPE
+void
+ARG TYPE
+List<String>
+ARG TYPE
+WifiP2pDevice
+INTERFACE
+Landroid/view/ActionMode$Callback;
+METHOD
+onCreateActionMode
+RETURN TYPE
+boolean
+ARG TYPE
+ActionMode
+ARG TYPE
+Menu
+METHOD
+onPrepareActionMode
+RETURN TYPE
+boolean
+ARG TYPE
+ActionMode
+ARG TYPE
+Menu
+METHOD
+onActionItemClicked
+RETURN TYPE
+boolean
+ARG TYPE
+ActionMode
+ARG TYPE
+MenuItem
+METHOD
+onDestroyActionMode
+RETURN TYPE
+void
+ARG TYPE
+ActionMode
+INTERFACE
+Landroid/view/SurfaceHolder$Callback2;
+METHOD
+surfaceRedrawNeeded
+RETURN TYPE
+void
+ARG TYPE
+SurfaceHolder
+METHOD
+surfaceRedrawNeededAsync
+RETURN TYPE
+void
+ARG TYPE
+SurfaceHolder
+ARG TYPE
+Runnable
+INTERFACE
+Landroid/view/textservice/SpellCheckerSession$SpellCheckerSessionListener;
+METHOD
+onGetSuggestions
+RETURN TYPE
+void
+ARG TYPE
+SuggestionsInfo[]
+METHOD
+onGetSentenceSuggestions
+RETURN TYPE
+void
+ARG TYPE
+SentenceSuggestionsInfo[]
+INTERFACE
+Landroid/os/IBinder$DeathRecipient;
+METHOD
+binderDied
+RETURN TYPE
+void
+INTERFACE
+Landroid/view/TextureView$SurfaceTextureListener;
+METHOD
+onSurfaceTextureAvailable
+RETURN TYPE
+void
+ARG TYPE
+SurfaceTexture
+ARG TYPE
+int
+ARG TYPE
+int
+METHOD
+onSurfaceTextureSizeChanged
+RETURN TYPE
+void
+ARG TYPE
+SurfaceTexture
+ARG TYPE
+int
+ARG TYPE
+int
+METHOD
+onSurfaceTextureDestroyed
+RETURN TYPE
+boolean
+ARG TYPE
+SurfaceTexture
+METHOD
+onSurfaceTextureUpdated
+RETURN TYPE
+void
+ARG TYPE
+SurfaceTexture
+INTERFACE
+Landroid/content/ComponentCallbacks;
+METHOD
+onConfigurationChanged
+RETURN TYPE
+void
+ARG TYPE
+Configuration
+METHOD
+onLowMemory
+RETURN TYPE
+void
+INTERFACE
+Landroid/widget/AutoCompleteTextView$OnDismissListener;
+METHOD
+onDismiss
+RETURN TYPE
+void
+INTERFACE
+Landroid/widget/ExpandableListView$OnGroupExpandListener;
+METHOD
+onGroupExpand
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/media/MediaPlayer$OnErrorListener;
+METHOD
+onError
+RETURN TYPE
+boolean
+ARG TYPE
+MediaPlayer
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/accounts/OnAccountsUpdateListener;
+METHOD
+onAccountsUpdated
+RETURN TYPE
+void
+ARG TYPE
+Account[]
+INTERFACE
+Landroid/widget/AdapterView$OnItemClickListener;
+METHOD
+onItemClick
+RETURN TYPE
+void
+ARG TYPE
+AdapterView<?>
+ARG TYPE
+View
+ARG TYPE
+int
+ARG TYPE
+long
+INTERFACE
+Landroid/animation/ValueAnimator$AnimatorUpdateListener;
+METHOD
+onAnimationUpdate
+RETURN TYPE
+void
+ARG TYPE
+ValueAnimator
+INTERFACE
+Landroid/media/MediaPlayer$OnSeekCompleteListener;
+METHOD
+onSeekComplete
+RETURN TYPE
+void
+ARG TYPE
+MediaPlayer
+INTERFACE
+Landroid/view/inputmethod/InputMethod$SessionCallback;
+METHOD
+sessionCreated
+RETURN TYPE
+void
+ARG TYPE
+InputMethodSession
+INTERFACE
+Landroid/app/Application$ActivityLifecycleCallbacks;
+METHOD
+onActivityCreated
+RETURN TYPE
+void
+ARG TYPE
+Activity
+ARG TYPE
+Bundle
+METHOD
+onActivityStarted
+RETURN TYPE
+void
+ARG TYPE
+Activity
+METHOD
+onActivityResumed
+RETURN TYPE
+void
+ARG TYPE
+Activity
+METHOD
+onActivityPaused
+RETURN TYPE
+void
+ARG TYPE
+Activity
+METHOD
+onActivityStopped
+RETURN TYPE
+void
+ARG TYPE
+Activity
+METHOD
+onActivitySaveInstanceState
+RETURN TYPE
+void
+ARG TYPE
+Activity
+ARG TYPE
+Bundle
+METHOD
+onActivityDestroyed
+RETURN TYPE
+void
+ARG TYPE
+Activity
+INTERFACE
+Landroid/app/PendingIntent$OnFinished;
+METHOD
+onSendFinished
+RETURN TYPE
+void
+ARG TYPE
+PendingIntent
+ARG TYPE
+Intent
+ARG TYPE
+int
+ARG TYPE
+String
+ARG TYPE
+Bundle
+INTERFACE
+Landroid/hardware/Camera$ErrorCallback;
+METHOD
+onError
+RETURN TYPE
+void
+ARG TYPE
+int
+ARG TYPE
+Camera
+INTERFACE
+Landroid/content/ClipboardManager$OnPrimaryClipChangedListener;
+METHOD
+onPrimaryClipChanged
+RETURN TYPE
+void
+INTERFACE
+Landroid/media/MediaPlayer$OnInfoListener;
+METHOD
+onInfo
+RETURN TYPE
+boolean
+ARG TYPE
+MediaPlayer
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/view/inputmethod/InputMethodSession$EventCallback;
+METHOD
+finishedEvent
+RETURN TYPE
+void
+ARG TYPE
+int
+ARG TYPE
+boolean
+INTERFACE
+Landroid/view/ViewTreeObserver$OnDrawListener;
+METHOD
+onDraw
+RETURN TYPE
+void
+INTERFACE
+Landroid/animation/Animator$AnimatorListener;
+METHOD
+onAnimationStart
+RETURN TYPE
+void
+ARG TYPE
+Animator
+ARG TYPE
+boolean
+METHOD
+onAnimationEnd
+RETURN TYPE
+void
+ARG TYPE
+Animator
+ARG TYPE
+boolean
+METHOD
+onAnimationStart
+RETURN TYPE
+void
+ARG TYPE
+Animator
+METHOD
+onAnimationEnd
+RETURN TYPE
+void
+ARG TYPE
+Animator
+METHOD
+onAnimationCancel
+RETURN TYPE
+void
+ARG TYPE
+Animator
+METHOD
+onAnimationRepeat
+RETURN TYPE
+void
+ARG TYPE
+Animator
+INTERFACE
+Landroid/media/audiofx/AudioEffect$OnControlStatusChangeListener;
+METHOD
+onControlStatusChange
+RETURN TYPE
+void
+ARG TYPE
+AudioEffect
+ARG TYPE
+boolean
+INTERFACE
+Landroid/media/MediaRecorder$OnErrorListener;
+METHOD
+onError
+RETURN TYPE
+void
+ARG TYPE
+MediaRecorder
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/media/audiofx/EnvironmentalReverb$OnParameterChangeListener;
+METHOD
+onParameterChange
+RETURN TYPE
+void
+ARG TYPE
+EnvironmentalReverb
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/view/animation/Animation$AnimationListener;
+METHOD
+onAnimationStart
+RETURN TYPE
+void
+ARG TYPE
+Animation
+METHOD
+onAnimationEnd
+RETURN TYPE
+void
+ARG TYPE
+Animation
+METHOD
+onAnimationRepeat
+RETURN TYPE
+void
+ARG TYPE
+Animation
+INTERFACE
+Landroid/widget/PopupWindow$OnDismissListener;
+METHOD
+onDismiss
+RETURN TYPE
+void
+INTERFACE
+Landroid/content/DialogInterface$OnMultiChoiceClickListener;
+METHOD
+onClick
+RETURN TYPE
+void
+ARG TYPE
+DialogInterface
+ARG TYPE
+int
+ARG TYPE
+boolean
+INTERFACE
+Landroid/widget/SearchView$OnQueryTextListener;
+METHOD
+onQueryTextSubmit
+RETURN TYPE
+boolean
+ARG TYPE
+String
+METHOD
+onQueryTextChange
+RETURN TYPE
+boolean
+ARG TYPE
+String
+INTERFACE
+Landroid/content/DialogInterface$OnCancelListener;
+METHOD
+onCancel
+RETURN TYPE
+void
+ARG TYPE
+DialogInterface
+INTERFACE
+Landroid/content/DialogInterface$OnKeyListener;
+METHOD
+onKey
+RETURN TYPE
+boolean
+ARG TYPE
+DialogInterface
+ARG TYPE
+int
+ARG TYPE
+KeyEvent
+INTERFACE
+Landroid/location/LocationListener;
+METHOD
+onLocationChanged
+RETURN TYPE
+void
+ARG TYPE
+Location
+METHOD
+onStatusChanged
+RETURN TYPE
+void
+ARG TYPE
+String
+ARG TYPE
+int
+ARG TYPE
+Bundle
+METHOD
+onProviderEnabled
+RETURN TYPE
+void
+ARG TYPE
+String
+METHOD
+onProviderDisabled
+RETURN TYPE
+void
+ARG TYPE
+String
+INTERFACE
+Landroid/widget/AbsListView$RecyclerListener;
+METHOD
+onMovedToScrapHeap
+RETURN TYPE
+void
+ARG TYPE
+View
+INTERFACE
+Landroid/preference/Preference$OnPreferenceClickListener;
+METHOD
+onPreferenceClick
+RETURN TYPE
+boolean
+ARG TYPE
+Preference
+INTERFACE
+Landroid/location/GpsStatus$NmeaListener;
+METHOD
+onNmeaReceived
+RETURN TYPE
+void
+ARG TYPE
+long
+ARG TYPE
+String
+INTERFACE
+Landroid/speech/tts/TextToSpeech$OnUtteranceCompletedListener;
+METHOD
+onUtteranceCompleted
+RETURN TYPE
+void
+ARG TYPE
+String
+INTERFACE
+Landroid/app/LoaderManager$LoaderCallbacks;
+METHOD
+onCreateLoader
+RETURN TYPE
+Loader<D>
+ARG TYPE
+int
+ARG TYPE
+Bundle
+METHOD
+onLoadFinished
+RETURN TYPE
+void
+ARG TYPE
+Loader<D>
+ARG TYPE
+D
+METHOD
+onLoaderReset
+RETURN TYPE
+void
+ARG TYPE
+Loader<D>
+INTERFACE
+Landroid/database/sqlite/SQLiteTransactionListener;
+METHOD
+onBegin
+RETURN TYPE
+void
+METHOD
+onCommit
+RETURN TYPE
+void
+METHOD
+onRollback
+RETURN TYPE
+void
+INTERFACE
+Landroid/view/View$OnCreateContextMenuListener;
+METHOD
+onCreateContextMenu
+RETURN TYPE
+void
+ARG TYPE
+ContextMenu
+ARG TYPE
+View
+ARG TYPE
+ContextMenuInfo
+INTERFACE
+Landroid/content/IntentSender$OnFinished;
+METHOD
+onSendFinished
+RETURN TYPE
+void
+ARG TYPE
+IntentSender
+ARG TYPE
+Intent
+ARG TYPE
+int
+ARG TYPE
+String
+ARG TYPE
+Bundle
+INTERFACE
+Landroid/media/MediaPlayer$OnCompletionListener;
+METHOD
+onCompletion
+RETURN TYPE
+void
+ARG TYPE
+MediaPlayer
+INTERFACE
+Landroid/media/audiofx/BassBoost$OnParameterChangeListener;
+METHOD
+onParameterChange
+RETURN TYPE
+void
+ARG TYPE
+BassBoost
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+short
+INTERFACE
+Landroid/speech/tts/TextToSpeech$OnInitListener;
+METHOD
+onInit
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/location/GpsStatus$Listener;
+METHOD
+onGpsStatusChanged
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/app/ActionBar$OnNavigationListener;
+METHOD
+onNavigationItemSelected
+RETURN TYPE
+boolean
+ARG TYPE
+int
+ARG TYPE
+long
+INTERFACE
+Landroid/view/ScaleGestureDetector$OnScaleGestureListener;
+METHOD
+onScale
+RETURN TYPE
+boolean
+ARG TYPE
+ScaleGestureDetector
+METHOD
+onScaleBegin
+RETURN TYPE
+boolean
+ARG TYPE
+ScaleGestureDetector
+METHOD
+onScaleEnd
+RETURN TYPE
+void
+ARG TYPE
+ScaleGestureDetector
+INTERFACE
+Landroid/media/audiofx/AudioEffect$OnEnableStatusChangeListener;
+METHOD
+onEnableStatusChange
+RETURN TYPE
+void
+ARG TYPE
+AudioEffect
+ARG TYPE
+boolean
+INTERFACE
+Landroid/hardware/Camera$FaceDetectionListener;
+METHOD
+onFaceDetection
+RETURN TYPE
+void
+ARG TYPE
+Face[]
+ARG TYPE
+Camera
+INTERFACE
+Landroid/net/nsd/NsdManager$ResolveListener;
+METHOD
+onResolveFailed
+RETURN TYPE
+void
+ARG TYPE
+NsdServiceInfo
+ARG TYPE
+int
+METHOD
+onServiceResolved
+RETURN TYPE
+void
+ARG TYPE
+NsdServiceInfo
+INTERFACE
+Landroid/app/KeyguardManager$OnKeyguardExitResult;
+METHOD
+onKeyguardExitResult
+RETURN TYPE
+void
+ARG TYPE
+boolean
+INTERFACE
+Landroid/net/nsd/NsdManager$RegistrationListener;
+METHOD
+onRegistrationFailed
+RETURN TYPE
+void
+ARG TYPE
+NsdServiceInfo
+ARG TYPE
+int
+METHOD
+onUnregistrationFailed
+RETURN TYPE
+void
+ARG TYPE
+NsdServiceInfo
+ARG TYPE
+int
+METHOD
+onServiceRegistered
+RETURN TYPE
+void
+ARG TYPE
+NsdServiceInfo
+METHOD
+onServiceUnregistered
+RETURN TYPE
+void
+ARG TYPE
+NsdServiceInfo
+INTERFACE
+Landroid/view/ViewStub$OnInflateListener;
+METHOD
+onInflate
+RETURN TYPE
+void
+ARG TYPE
+ViewStub
+ARG TYPE
+View
+INTERFACE
+Landroid/app/ActionBar$TabListener;
+METHOD
+onTabSelected
+RETURN TYPE
+void
+ARG TYPE
+Tab
+ARG TYPE
+FragmentTransaction
+METHOD
+onTabUnselected
+RETURN TYPE
+void
+ARG TYPE
+Tab
+ARG TYPE
+FragmentTransaction
+METHOD
+onTabReselected
+RETURN TYPE
+void
+ARG TYPE
+Tab
+ARG TYPE
+FragmentTransaction
+INTERFACE
+Landroid/graphics/SurfaceTexture$OnFrameAvailableListener;
+METHOD
+onFrameAvailable
+RETURN TYPE
+void
+ARG TYPE
+SurfaceTexture
+INTERFACE
+Landroid/drm/DrmManagerClient$OnErrorListener;
+METHOD
+onError
+RETURN TYPE
+void
+ARG TYPE
+DrmManagerClient
+ARG TYPE
+DrmErrorEvent
+INTERFACE
+Landroid/media/audiofx/PresetReverb$OnParameterChangeListener;
+METHOD
+onParameterChange
+RETURN TYPE
+void
+ARG TYPE
+PresetReverb
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+short
+INTERFACE
+Landroid/widget/AbsListView$OnScrollListener;
+METHOD
+onScrollStateChanged
+RETURN TYPE
+void
+ARG TYPE
+AbsListView
+ARG TYPE
+int
+METHOD
+onScroll
+RETURN TYPE
+void
+ARG TYPE
+AbsListView
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/hardware/Camera$ShutterCallback;
+METHOD
+onShutter
+RETURN TYPE
+void
+INTERFACE
+Landroid/view/GestureDetector$OnGestureListener;
+METHOD
+onDown
+RETURN TYPE
+boolean
+ARG TYPE
+MotionEvent
+METHOD
+onShowPress
+RETURN TYPE
+void
+ARG TYPE
+MotionEvent
+METHOD
+onSingleTapUp
+RETURN TYPE
+boolean
+ARG TYPE
+MotionEvent
+METHOD
+onScroll
+RETURN TYPE
+boolean
+ARG TYPE
+MotionEvent
+ARG TYPE
+MotionEvent
+ARG TYPE
+float
+ARG TYPE
+float
+METHOD
+onLongPress
+RETURN TYPE
+void
+ARG TYPE
+MotionEvent
+METHOD
+onFling
+RETURN TYPE
+boolean
+ARG TYPE
+MotionEvent
+ARG TYPE
+MotionEvent
+ARG TYPE
+float
+ARG TYPE
+float
+INTERFACE
+Landroid/view/SurfaceHolder$Callback;
+METHOD
+surfaceCreated
+RETURN TYPE
+void
+ARG TYPE
+SurfaceHolder
+METHOD
+surfaceChanged
+RETURN TYPE
+void
+ARG TYPE
+SurfaceHolder
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+METHOD
+surfaceDestroyed
+RETURN TYPE
+void
+ARG TYPE
+SurfaceHolder
+INTERFACE
+Landroid/net/wifi/p2p/WifiP2pManager$DnsSdServiceResponseListener;
+METHOD
+onDnsSdServiceAvailable
+RETURN TYPE
+void
+ARG TYPE
+String
+ARG TYPE
+String
+ARG TYPE
+WifiP2pDevice
+INTERFACE
+Landroid/net/wifi/p2p/WifiP2pManager$DnsSdTxtRecordListener;
+METHOD
+onDnsSdTxtRecordAvailable
+RETURN TYPE
+void
+ARG TYPE
+String
+ARG TYPE
+Map<String,String>
+ARG TYPE
+WifiP2pDevice
+INTERFACE
+Landroid/gesture/GestureOverlayView$OnGesturingListener;
+METHOD
+onGesturingStarted
+RETURN TYPE
+void
+ARG TYPE
+GestureOverlayView
+METHOD
+onGesturingEnded
+RETURN TYPE
+void
+ARG TYPE
+GestureOverlayView
+INTERFACE
+Landroid/hardware/SensorEventListener;
+METHOD
+onSensorChanged
+RETURN TYPE
+void
+ARG TYPE
+SensorEvent
+METHOD
+onAccuracyChanged
+RETURN TYPE
+void
+ARG TYPE
+Sensor
+ARG TYPE
+int
+INTERFACE
+Landroid/media/MediaScannerConnection$MediaScannerConnectionClient;
+METHOD
+onMediaScannerConnected
+RETURN TYPE
+void
+METHOD
+onScanCompleted
+RETURN TYPE
+void
+ARG TYPE
+String
+ARG TYPE
+Uri
+INTERFACE
+Landroid/view/InputQueue$Callback;
+METHOD
+onInputQueueCreated
+RETURN TYPE
+void
+ARG TYPE
+InputQueue
+METHOD
+onInputQueueDestroyed
+RETURN TYPE
+void
+ARG TYPE
+InputQueue
+INTERFACE
+Landroid/content/SharedPreferences$OnSharedPreferenceChangeListener;
+METHOD
+onSharedPreferenceChanged
+RETURN TYPE
+void
+ARG TYPE
+SharedPreferences
+ARG TYPE
+String
+INTERFACE
+Landroid/security/KeyChainAliasCallback;
+METHOD
+alias
+RETURN TYPE
+void
+ARG TYPE
+String
+INTERFACE
+Landroid/hardware/Camera$OnZoomChangeListener;
+METHOD
+onZoomChange
+RETURN TYPE
+void
+ARG TYPE
+int
+ARG TYPE
+boolean
+ARG TYPE
+Camera
+INTERFACE
+Landroid/media/audiofx/Equalizer$OnParameterChangeListener;
+METHOD
+onParameterChange
+RETURN TYPE
+void
+ARG TYPE
+Equalizer
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/preference/PreferenceManager$OnActivityDestroyListener;
+METHOD
+onActivityDestroy
+RETURN TYPE
+void
+INTERFACE
+Landroid/animation/LayoutTransition$TransitionListener;
+METHOD
+startTransition
+RETURN TYPE
+void
+ARG TYPE
+LayoutTransition
+ARG TYPE
+ViewGroup
+ARG TYPE
+View
+ARG TYPE
+int
+METHOD
+endTransition
+RETURN TYPE
+void
+ARG TYPE
+LayoutTransition
+ARG TYPE
+ViewGroup
+ARG TYPE
+View
+ARG TYPE
+int
+INTERFACE
+Landroid/drm/DrmManagerClient$OnEventListener;
+METHOD
+onEvent
+RETURN TYPE
+void
+ARG TYPE
+DrmManagerClient
+ARG TYPE
+DrmEvent
+INTERFACE
+Landroid/net/wifi/p2p/WifiP2pManager$PeerListListener;
+METHOD
+onPeersAvailable
+RETURN TYPE
+void
+ARG TYPE
+WifiP2pDeviceList
+INTERFACE
+Landroid/view/View$OnLongClickListener;
+METHOD
+onLongClick
+RETURN TYPE
+boolean
+ARG TYPE
+View
+INTERFACE
+Landroid/view/KeyEvent$Callback;
+METHOD
+onKeyDown
+RETURN TYPE
+boolean
+ARG TYPE
+int
+ARG TYPE
+KeyEvent
+METHOD
+onKeyLongPress
+RETURN TYPE
+boolean
+ARG TYPE
+int
+ARG TYPE
+KeyEvent
+METHOD
+onKeyUp
+RETURN TYPE
+boolean
+ARG TYPE
+int
+ARG TYPE
+KeyEvent
+METHOD
+onKeyMultiple
+RETURN TYPE
+boolean
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+KeyEvent
+INTERFACE
+Landroid/view/View$OnTouchListener;
+METHOD
+onTouch
+RETURN TYPE
+boolean
+ARG TYPE
+View
+ARG TYPE
+MotionEvent
+INTERFACE
+Landroid/net/wifi/p2p/WifiP2pManager$ConnectionInfoListener;
+METHOD
+onConnectionInfoAvailable
+RETURN TYPE
+void
+ARG TYPE
+WifiP2pInfo
+INTERFACE
+Landroid/content/DialogInterface$OnDismissListener;
+METHOD
+onDismiss
+RETURN TYPE
+void
+ARG TYPE
+DialogInterface
+INTERFACE
+Landroid/preference/Preference$OnPreferenceChangeListener;
+METHOD
+onPreferenceChange
+RETURN TYPE
+boolean
+ARG TYPE
+Preference
+ARG TYPE
+Object
+INTERFACE
+Landroid/widget/NumberPicker$OnScrollListener;
+METHOD
+onScrollStateChange
+RETURN TYPE
+void
+ARG TYPE
+NumberPicker
+ARG TYPE
+int
+INTERFACE
+Landroid/widget/SlidingDrawer$OnDrawerScrollListener;
+METHOD
+onScrollStarted
+RETURN TYPE
+void
+METHOD
+onScrollEnded
+RETURN TYPE
+void
+INTERFACE
+Landroid/media/MediaPlayer$OnPreparedListener;
+METHOD
+onPrepared
+RETURN TYPE
+void
+ARG TYPE
+MediaPlayer
+INTERFACE
+Landroid/media/MediaPlayer$OnVideoSizeChangedListener;
+METHOD
+onVideoSizeChanged
+RETURN TYPE
+void
+ARG TYPE
+MediaPlayer
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/widget/RadioGroup$OnCheckedChangeListener;
+METHOD
+onCheckedChanged
+RETURN TYPE
+void
+ARG TYPE
+RadioGroup
+ARG TYPE
+int
+INTERFACE
+Landroid/webkit/DownloadListener;
+METHOD
+onDownloadStart
+RETURN TYPE
+void
+ARG TYPE
+String
+ARG TYPE
+String
+ARG TYPE
+String
+ARG TYPE
+String
+ARG TYPE
+long
+INTERFACE
+Landroid/media/MediaPlayer$OnBufferingUpdateListener;
+METHOD
+onBufferingUpdate
+RETURN TYPE
+void
+ARG TYPE
+MediaPlayer
+ARG TYPE
+int
+INTERFACE
+Landroid/hardware/Camera$PictureCallback;
+METHOD
+onPictureTaken
+RETURN TYPE
+void
+ARG TYPE
+byte[]
+ARG TYPE
+Camera
+INTERFACE
+Landroid/view/View$OnGenericMotionListener;
+METHOD
+onGenericMotion
+RETURN TYPE
+boolean
+ARG TYPE
+View
+ARG TYPE
+MotionEvent
+INTERFACE
+Landroid/view/View$OnKeyListener;
+METHOD
+onKey
+RETURN TYPE
+boolean
+ARG TYPE
+View
+ARG TYPE
+int
+ARG TYPE
+KeyEvent
+INTERFACE
+Landroid/widget/ExpandableListView$OnChildClickListener;
+METHOD
+onChildClick
+RETURN TYPE
+boolean
+ARG TYPE
+ExpandableListView
+ARG TYPE
+View
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+long
+INTERFACE
+Landroid/widget/DatePicker$OnDateChangedListener;
+METHOD
+onDateChanged
+RETURN TYPE
+void
+ARG TYPE
+DatePicker
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/animation/TimeAnimator$TimeListener;
+METHOD
+onTimeUpdate
+RETURN TYPE
+void
+ARG TYPE
+TimeAnimator
+ARG TYPE
+long
+ARG TYPE
+long
+INTERFACE
+Landroid/app/TimePickerDialog$OnTimeSetListener;
+METHOD
+onTimeSet
+RETURN TYPE
+void
+ARG TYPE
+TimePicker
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/hardware/Camera$AutoFocusMoveCallback;
+METHOD
+onAutoFocusMoving
+RETURN TYPE
+void
+ARG TYPE
+boolean
+ARG TYPE
+Camera
+INTERFACE
+Landroid/media/MediaRecorder$OnInfoListener;
+METHOD
+onInfo
+RETURN TYPE
+void
+ARG TYPE
+MediaRecorder
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/view/ViewTreeObserver$OnPreDrawListener;
+METHOD
+onPreDraw
+RETURN TYPE
+boolean
+INTERFACE
+Landroid/widget/ExpandableListView$OnGroupClickListener;
+METHOD
+onGroupClick
+RETURN TYPE
+boolean
+ARG TYPE
+ExpandableListView
+ARG TYPE
+View
+ARG TYPE
+int
+ARG TYPE
+long
+INTERFACE
+Landroid/widget/SlidingDrawer$OnDrawerCloseListener;
+METHOD
+onDrawerClosed
+RETURN TYPE
+void
+INTERFACE
+Landroid/media/MediaScannerConnection$OnScanCompletedListener;
+METHOD
+onScanCompleted
+RETURN TYPE
+void
+ARG TYPE
+String
+ARG TYPE
+Uri
+INTERFACE
+Landroid/view/View$OnHoverListener;
+METHOD
+onHover
+RETURN TYPE
+boolean
+ARG TYPE
+View
+ARG TYPE
+MotionEvent
+INTERFACE
+Landroid/preference/PreferenceManager$OnActivityResultListener;
+METHOD
+onActivityResult
+RETURN TYPE
+boolean
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+Intent
+INTERFACE
+Landroid/view/View$OnDragListener;
+METHOD
+onDrag
+RETURN TYPE
+boolean
+ARG TYPE
+View
+ARG TYPE
+DragEvent
+INTERFACE
+Landroid/os/RecoverySystem$ProgressListener;
+METHOD
+onProgress
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/view/GestureDetector$OnDoubleTapListener;
+METHOD
+onSingleTapConfirmed
+RETURN TYPE
+boolean
+ARG TYPE
+MotionEvent
+METHOD
+onDoubleTap
+RETURN TYPE
+boolean
+ARG TYPE
+MotionEvent
+METHOD
+onDoubleTapEvent
+RETURN TYPE
+boolean
+ARG TYPE
+MotionEvent
+INTERFACE
+Landroid/hardware/Camera$PreviewCallback;
+METHOD
+onPreviewFrame
+RETURN TYPE
+void
+ARG TYPE
+byte[]
+ARG TYPE
+Camera
+INTERFACE
+Landroid/widget/SearchView$OnSuggestionListener;
+METHOD
+onSuggestionSelect
+RETURN TYPE
+boolean
+ARG TYPE
+int
+METHOD
+onSuggestionClick
+RETURN TYPE
+boolean
+ARG TYPE
+int
+INTERFACE
+Landroid/net/sip/SipRegistrationListener;
+METHOD
+onRegistering
+RETURN TYPE
+void
+ARG TYPE
+String
+METHOD
+onRegistrationDone
+RETURN TYPE
+void
+ARG TYPE
+String
+ARG TYPE
+long
+METHOD
+onRegistrationFailed
+RETURN TYPE
+void
+ARG TYPE
+String
+ARG TYPE
+int
+ARG TYPE
+String
+INTERFACE
+Landroid/view/ViewGroup$OnHierarchyChangeListener;
+METHOD
+onChildViewAdded
+RETURN TYPE
+void
+ARG TYPE
+View
+ARG TYPE
+View
+METHOD
+onChildViewRemoved
+RETURN TYPE
+void
+ARG TYPE
+View
+ARG TYPE
+View
+INTERFACE
+Landroid/media/JetPlayer$OnJetEventListener;
+METHOD
+onJetEvent
+RETURN TYPE
+void
+ARG TYPE
+JetPlayer
+ARG TYPE
+short
+ARG TYPE
+byte
+ARG TYPE
+byte
+ARG TYPE
+byte
+ARG TYPE
+byte
+METHOD
+onJetUserIdUpdate
+RETURN TYPE
+void
+ARG TYPE
+JetPlayer
+ARG TYPE
+int
+ARG TYPE
+int
+METHOD
+onJetNumQueuedSegmentUpdate
+RETURN TYPE
+void
+ARG TYPE
+JetPlayer
+ARG TYPE
+int
+METHOD
+onJetPauseUpdate
+RETURN TYPE
+void
+ARG TYPE
+JetPlayer
+ARG TYPE
+int
+INTERFACE
+Landroid/widget/Filter$FilterListener;
+METHOD
+onFilterComplete
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/view/ViewTreeObserver$OnGlobalLayoutListener;
+METHOD
+onGlobalLayout
+RETURN TYPE
+void
+INTERFACE
+Landroid/widget/SeekBar$OnSeekBarChangeListener;
+METHOD
+onProgressChanged
+RETURN TYPE
+void
+ARG TYPE
+SeekBar
+ARG TYPE
+int
+ARG TYPE
+boolean
+METHOD
+onStartTrackingTouch
+RETURN TYPE
+void
+ARG TYPE
+SeekBar
+METHOD
+onStopTrackingTouch
+RETURN TYPE
+void
+ARG TYPE
+SeekBar
+INTERFACE
+Landroid/app/ActionBar$OnMenuVisibilityListener;
+METHOD
+onMenuVisibilityChanged
+RETURN TYPE
+void
+ARG TYPE
+boolean
+INTERFACE
+Landroid/bluetooth/BluetoothProfile$ServiceListener;
+METHOD
+onServiceConnected
+RETURN TYPE
+void
+ARG TYPE
+int
+ARG TYPE
+BluetoothProfile
+METHOD
+onServiceDisconnected
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/os/MessageQueue$IdleHandler;
+METHOD
+queueIdle
+RETURN TYPE
+boolean
+INTERFACE
+Landroid/view/View$OnLayoutChangeListener;
+METHOD
+onLayoutChange
+RETURN TYPE
+void
+ARG TYPE
+View
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/widget/ZoomButtonsController$OnZoomListener;
+METHOD
+onVisibilityChanged
+RETURN TYPE
+void
+ARG TYPE
+boolean
+METHOD
+onZoom
+RETURN TYPE
+void
+ARG TYPE
+boolean
+INTERFACE
+Landroid/speech/RecognitionListener;
+METHOD
+onReadyForSpeech
+RETURN TYPE
+void
+ARG TYPE
+Bundle
+METHOD
+onBeginningOfSpeech
+RETURN TYPE
+void
+METHOD
+onRmsChanged
+RETURN TYPE
+void
+ARG TYPE
+float
+METHOD
+onBufferReceived
+RETURN TYPE
+void
+ARG TYPE
+byte[]
+METHOD
+onEndOfSpeech
+RETURN TYPE
+void
+METHOD
+onError
+RETURN TYPE
+void
+ARG TYPE
+int
+METHOD
+onResults
+RETURN TYPE
+void
+ARG TYPE
+Bundle
+METHOD
+onPartialResults
+RETURN TYPE
+void
+ARG TYPE
+Bundle
+METHOD
+onEvent
+RETURN TYPE
+void
+ARG TYPE
+int
+ARG TYPE
+Bundle
+INTERFACE
+Landroid/widget/ExpandableListView$OnGroupCollapseListener;
+METHOD
+onGroupCollapse
+RETURN TYPE
+void
+ARG TYPE
+int
+INTERFACE
+Landroid/drm/DrmManagerClient$OnInfoListener;
+METHOD
+onInfo
+RETURN TYPE
+void
+ARG TYPE
+DrmManagerClient
+ARG TYPE
+DrmInfoEvent
+INTERFACE
+Landroid/gesture/GestureOverlayView$OnGesturePerformedListener;
+METHOD
+onGesturePerformed
+RETURN TYPE
+void
+ARG TYPE
+GestureOverlayView
+ARG TYPE
+Gesture
+INTERFACE
+Landroid/view/ActionProvider$VisibilityListener;
+METHOD
+onActionProviderVisibilityChanged
+RETURN TYPE
+void
+ARG TYPE
+boolean
+INTERFACE
+Landroid/widget/TabHost$OnTabChangeListener;
+METHOD
+onTabChanged
+RETURN TYPE
+void
+ARG TYPE
+String
+INTERFACE
+Landroid/media/audiofx/Visualizer$OnDataCaptureListener;
+METHOD
+onWaveFormDataCapture
+RETURN TYPE
+void
+ARG TYPE
+Visualizer
+ARG TYPE
+byte[]
+ARG TYPE
+int
+METHOD
+onFftDataCapture
+RETURN TYPE
+void
+ARG TYPE
+Visualizer
+ARG TYPE
+byte[]
+ARG TYPE
+int
+INTERFACE
+Landroid/view/ViewTreeObserver$OnGlobalFocusChangeListener;
+METHOD
+onGlobalFocusChanged
+RETURN TYPE
+void
+ARG TYPE
+View
+ARG TYPE
+View
+INTERFACE
+Landroid/app/DatePickerDialog$OnDateSetListener;
+METHOD
+onDateSet
+RETURN TYPE
+void
+ARG TYPE
+DatePicker
+ARG TYPE
+int
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/media/SoundPool$OnLoadCompleteListener;
+METHOD
+onLoadComplete
+RETURN TYPE
+void
+ARG TYPE
+SoundPool
+ARG TYPE
+int
+ARG TYPE
+int
+INTERFACE
+Landroid/net/wifi/p2p/WifiP2pManager$ChannelListener;
+METHOD
+onChannelDisconnected
+RETURN TYPE
+void
+INTERFACE
+Landroid/widget/AdapterView$OnItemLongClickListener;
+METHOD
+onItemLongClick
+RETURN TYPE
+boolean
+ARG TYPE
+AdapterView<?>
+ARG TYPE
+View
+ARG TYPE
+int
+ARG TYPE
+long
+INTERFACE
+Landroid/net/nsd/NsdManager$DiscoveryListener;
+METHOD
+onStartDiscoveryFailed
+RETURN TYPE
+void
+ARG TYPE
+String
+ARG TYPE
+int
+METHOD
+onStopDiscoveryFailed
+RETURN TYPE
+void
+ARG TYPE
+String
+ARG TYPE
+int
+METHOD
+onDiscoveryStarted
+RETURN TYPE
+void
+ARG TYPE
+String
+METHOD
+onDiscoveryStopped
+RETURN TYPE
+void
+ARG TYPE
+String
+METHOD
+onServiceFound
+RETURN TYPE
+void
+ARG TYPE
+NsdServiceInfo
+METHOD
+onServiceLost
+RETURN TYPE
+void
+ARG TYPE
+NsdServiceInfo
+INTERFACE
+Landroid/inputmethodservice/KeyboardView$OnKeyboardActionListener;
+METHOD
+onPress
+RETURN TYPE
+void
+ARG TYPE
+int
+METHOD
+onRelease
+RETURN TYPE
+void
+ARG TYPE
+int
+METHOD
+onKey
+RETURN TYPE
+void
+ARG TYPE
+int
+ARG TYPE
+int[]
+METHOD
+onText
+RETURN TYPE
+void
+ARG TYPE
+CharSequence
+METHOD
+swipeLeft
+RETURN TYPE
+void
+METHOD
+swipeRight
+RETURN TYPE
+void
+METHOD
+swipeDown
+RETURN TYPE
+void
+METHOD
+swipeUp
+RETURN TYPE
+void
+INTERFACE
+Landroid/preference/PreferenceFragment$OnPreferenceStartFragmentCallback;
+METHOD
+onPreferenceStartFragment
+RETURN TYPE
+boolean
+ARG TYPE
+PreferenceFragment
+ARG TYPE
+Preference
+INTERFACE
+Landroid/media/MediaPlayer$OnTimedTextListener;
+METHOD
+onTimedText
+RETURN TYPE
+void
+ARG TYPE
+MediaPlayer
+ARG TYPE
+TimedText
+INTERFACE
+Landroid/content/Loader$OnLoadCanceledListener;
+METHOD
+onLoadCanceled
+RETURN TYPE
+void
+ARG TYPE
+Loader<D>
+INTERFACE
+Landroid/widget/RatingBar$OnRatingBarChangeListener;
+METHOD
+onRatingChanged
+RETURN TYPE
+void
+ARG TYPE
+RatingBar
+ARG TYPE
+float
+ARG TYPE
+boolean
