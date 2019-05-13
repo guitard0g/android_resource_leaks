@@ -1,5 +1,7 @@
 import logging
 import re
+import sys
+import time
 from collections import defaultdict
 from pprint import pprint
 from typing import Union
@@ -18,9 +20,12 @@ from callback_list import callback_list as android_callback_list
 show_logging(logging.FATAL)
 
 
-apk_file = str(input("Input name of apk: ")).strip()
+apk_file = sys.argv[1].strip()
+
 
 print("Decompiling APK...")
+
+start_time = time.time()
 apk_obj, dalv_format, dx = misc.AnalyzeAPK(apk_file)
 
 cg = dx.get_call_graph()
@@ -285,52 +290,68 @@ class ResourceLifecycle(object):
                     self.allocation_caller.name) + " -> " + str(
                         self.allocator.name)
 
+def find_on_create(main: ClassAnalysis):
+    on_create_search = dx.find_methods(classname=main.name, methodname="onCreate$")
+    on_create: MethodClassAnalysis = None
+    for item in on_create_search:
+        on_create = item
+    if not on_create:
+        parent = dx.get_class_analysis(main.extends)
+        if parent:
+            return find_on_create(parent)
+        else:
+            return None
+    else:
+        return on_create
+
 
 # get the main activity
 main_act = format_activity_name(apk_obj.get_main_activity())
 main_analysis: ClassAnalysis = dx.get_class_analysis(main_act)
 
-main_ast = {}
-for name, cls in sorted(machine.classes.items()):
-    if name == main_act:
-        if not isinstance(cls, DvClass):
-            cls = DvClass(cls, machine.vma)
-        cls.process(doAST=True)
-        main_ast[name] = cls.get_ast()
-
-print("Analyzing callbacks...")
-cbs = get_registered_callbacks(main_act, "onCreate", ast=main_ast)
-cb_methods = get_cb_methods()
-
-on_create_search = dx.find_methods(classname=main_act, methodname="onCreate$")
-on_create: MethodClassAnalysis
-for item in on_create_search:
-    on_create = item
+on_create: MethodClassAnalysis = find_on_create(main_analysis)
 on_create_enc = on_create.method
 
-found_methods = list()
+if on_create:
+    main_ast = {}
+    for name, cls in sorted(machine.classes.items()):
+        if name == on_create.class_name:
+            if not isinstance(cls, DvClass):
+                cls = DvClass(cls, machine.vma)
+            cls.process(doAST=True)
+            main_ast[name] = cls.get_ast()
 
-for cb_typ, cb_interface in cbs:
-    if cb_interface in cb_methods:
-        java_interface: JavaInterface = cb_methods[cb_interface]
-    else:
-        continue
-    interface_method: JavaMethod
+    print("Analyzing callbacks...")
+    cbs = get_registered_callbacks(main_act, "onCreate", ast=main_ast)
+    cb_methods = get_cb_methods()
 
-    for interface_method in java_interface.methods:
-        gen = dx.find_methods(classname=cb_typ, methodname=".*{}.*".format(interface_method.name))
-        analysis: MethodClassAnalysis
-        found = False
-        for item in gen:
-            analysis = item
-            found = True
-        if found:
-            found_methods.append(analysis.method)
+    found_methods = list()
+    for cb_typ, cb_interface in cbs:
+        if cb_interface in cb_methods:
+            java_interface: JavaInterface = cb_methods[cb_interface]
+        else:
+            continue
+        interface_method: JavaMethod
 
-for method_enc in found_methods:
-    print("adding edge: ", on_create_enc.name, " -> ", method_enc.name)
-    cg.add_edge(on_create_enc, method_enc)
+        for interface_method in java_interface.methods:
+            gen = dx.find_methods(classname=cb_typ, methodname=".*{}.*".format(interface_method.name))
+            analysis: MethodClassAnalysis
+            found = False
+            for item in gen:
+                analysis = item
+                found = True
+            if found:
+                found_methods.append(analysis.method)
 
+    for method_enc in found_methods:
+        print("adding edge: ", on_create_enc.name, " -> ", method_enc.name)
+        cg.add_edge(on_create_enc, method_enc)
+
+end_time = time.time()
+print("Preprocessing time: ", str(end_time - start_time))
+
+
+start_time = time.time()
 
 closers = dx.find_methods(methodname="^(end|abandon|cancel|clear|close|disable|finish|recycle|release|remove|stop|unload|unlock|unmount|unregister).*")
 openers = dx.find_methods(methodname="^(start|request|lock|open|register|acquire|vibrate|enable).*")
@@ -371,7 +392,7 @@ print("Searching for entrypoint -> resource request paths")
 path_generators = []
 for opener in openers:
     methodAnal: MethodClassAnalysis
-    for methodAnal in main_analysis.get_methods():
+    for methodAnal in set(main_analysis.get_methods()).union(set([on_create])):
         if methodAnal.name[:2] == 'on':  # entrypoint method
             path_generators.append(
                 shortest_simple_paths(cg, methodAnal.method, opener.method))
@@ -422,3 +443,6 @@ for l in lifecycles:
 
 if not has_leaks:
     print("All good!")
+
+end_time = time.time()
+print("Analysis time: ", str(end_time - start_time))
