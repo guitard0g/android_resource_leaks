@@ -10,7 +10,7 @@ from androguard.core.analysis.analysis import (ClassAnalysis, ExternalMethod,
                                                MethodClassAnalysis)
 from androguard.core.androconf import show_logging
 from androguard.core.bytecodes.dvm import EncodedMethod
-from androguard.decompiler.dad.decompile import DvMachine
+from androguard.decompiler.dad.decompile import DvClass, DvMachine
 from networkx import shortest_simple_paths
 
 from callback_list import callback_list as android_callback_list
@@ -27,8 +27,6 @@ cg = dx.get_call_graph()
 
 print("Getting syntax tree...")
 machine = DvMachine(apk_file)
-
-ast = machine.get_ast()
 
 
 def format_activity_name(name):
@@ -99,10 +97,13 @@ def get_method_invocations(ast):
 
 def get_registered_callbacks(classname,
                              methodname,
-                             ast=ast,
+                             ast,
                              callback_list=android_callback_list):
     registered_callbacks = []
-    method_ast_body = get_method_from_ast(ast[classname], methodname)['body']
+    try:
+        method_ast_body = get_method_from_ast(ast[classname], methodname)['body']
+    except Exception:
+        return registered_callbacks
     method_invocs = get_method_invocations(method_ast_body)
     for invoc in method_invocs:
         arg_types = get_method_arg_type(invoc)
@@ -289,8 +290,16 @@ class ResourceLifecycle(object):
 main_act = format_activity_name(apk_obj.get_main_activity())
 main_analysis: ClassAnalysis = dx.get_class_analysis(main_act)
 
+main_ast = {}
+for name, cls in sorted(machine.classes.items()):
+    if name == main_act:
+        if not isinstance(cls, DvClass):
+            cls = DvClass(cls, machine.vma)
+        cls.process(doAST=True)
+        main_ast[name] = cls.get_ast()
+
 print("Analyzing callbacks...")
-cbs = get_registered_callbacks(main_act, "onCreate")
+cbs = get_registered_callbacks(main_act, "onCreate", ast=main_ast)
 cb_methods = get_cb_methods()
 
 on_create_search = dx.find_methods(classname=main_act, methodname="onCreate$")
