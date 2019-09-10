@@ -1,0 +1,5 @@
+testApks/**
+__pycache__/**
+META-INF/**
+output/**
+parseInterfaces/.idea
