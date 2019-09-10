@@ -1,4 +1,4 @@
-from typing import Union
+from typing import List, Set, Dict, Tuple, Optional, Union
 
 from androguard.core.analysis.analysis import (
     ClassAnalysis,
@@ -8,6 +8,9 @@ from androguard.core.analysis.analysis import (
 )
 from androguard.core.bytecodes.dvm import EncodedMethod
 
+from allocatorUtil import Pair
+
+import networkx as nx
 
 # format of class name as stored in decompilation
 def format_activity_name(name):
@@ -182,7 +185,7 @@ def get_MethodClassAnalysis(
     return dx.get_method_analysis(method)
 
 
-def search_cfg(method: MethodClassAnalysis) -> None:
+def search_cfg(method: MethodClassAnalysis, seen_methods) -> None:
     searched_cfg = False
     if method.full_name not in seen_methods:
         seen_methods.add(method.full_name)
@@ -199,7 +202,7 @@ def add_cg_link(m1, m2):
         cg.add_edge(m1, m2)
 
 
-def link_to_exit_methods(m: EncodedMethod):
+def link_to_exit_methods(m: EncodedMethod, exit_methods):
     for method in exit_methods:
         add_cg_link(m, method)
 
@@ -278,3 +281,74 @@ class ResourceLifecycle(object):
                 + " -> "
                 + str(self.allocator.name)
         )
+
+
+def get_entrypoints(methods: List[MethodClassAnalysis]):
+    entrypoints: List[MethodClassAnalysis] = []
+    mca:  MethodClassAnalysis
+    for mca in methods:
+        if mca.name[:2] == "on":
+            entrypoints.append(mca)
+    return entrypoints
+
+
+def get_opener_paths(cg: nx.DiGraph, main_mcas: List[MethodClassAnalysis], pair: Pair):
+    entrypoints = get_entrypoints(main_mcas)
+    opener_paths: List[List[EncodedMethod]] = []
+    for entrypoint in entrypoints:
+        for opener in pair.openers:
+            try:
+                ssp = nx.shortest_simple_paths(cg, entrypoint.method, opener.method)
+                opener_paths.extend([x for x in ssp])
+            except nx.exception.NetworkXNoPath:
+                pass
+    return opener_paths
+
+
+def path_exists(cg: nx.DiGraph,
+                path: List[EncodedMethod],
+                pair: Pair,
+                exitpoints: List[EncodedMethod]):
+    node: EncodedMethod
+    # check if a closer is called directly from the same path
+    for node in path[:-1]:
+        for closer in pair.closers:
+            try:
+                ssp = nx.shortest_simple_paths(cg, node, closer.method)
+                if [x for x in ssp]:
+                    return True
+            except nx.exception.NetworkXNoPath:
+                pass
+    # check if a closer is called from an exitpoint
+    for exitpoint in exitpoints:
+        for closer in pair.closers:
+            try:
+                ssp = nx.shortest_simple_paths(cg, exitpoint, closer.method)
+                if [x for x in ssp]:
+                    return True
+            except nx.exception.NetworkXNoPath:
+                pass
+
+    return False
+
+
+def process_paths(cg: nx.DiGraph,
+                  opener_paths: List[List[EncodedMethod]],
+                  pair: Pair,
+                  exitpoints: List[EncodedMethod]):
+    open_paths = []
+    closed_paths = []
+    for path in opener_paths:
+        if path_exists(cg, path, pair, exitpoints):
+            closed_paths.append(path)
+        else:
+            open_paths.append(path)
+    return open_paths, closed_paths
+
+
+def print_allocation_path(path: List[EncodedMethod]):
+    print("PATH: ")
+    for item in path[:-1]:
+        print(item.name)
+        print("↓")
+    print(path[-1])

@@ -3,3 +3,4 @@ __pycache__/**
 META-INF/**
 output/**
 parseInterfaces/.idea
+.idea
