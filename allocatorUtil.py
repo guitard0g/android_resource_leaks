@@ -15,7 +15,6 @@ class Pair(object):
         opener_analyses = reference_dx.find_methods(methodname=opener, classname=classname)
         self.openers = [x for x in opener_analyses]
 
-
         self.closers = []
         for closer in closers:
             closer_gen = reference_dx.find_methods(methodname=closer, classname=classname)
@@ -47,7 +46,7 @@ def read_pair_file(reference_dx: Analysis, cg_filter: DiGraph = None) -> List[Pa
             # create Pair objects for the gathered map of opener to closer_list
             classname, opener = classname_opener
             pair = Pair(opener, closers, classname, reference_dx, cg_filter)
-            if pair.openers and pair.closers:
+            if pair.openers:
                 method_pairs.append(pair)
 
     return method_pairs

@@ -131,6 +131,7 @@ def main():
     main_mcas: List[MethodClassAnalysis] = main_analysis.get_methods()
     for pair in resource_method_pairs:
         opener_paths = get_opener_paths(cg, main_mcas, pair)
+        # opener_paths = filter_with_cg(opener_paths, cg_filter)
         if opener_paths:
             open_paths, closed_paths = process_paths(cg, opener_paths, pair, exit_methods)
             if open_paths:

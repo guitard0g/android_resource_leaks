@@ -214,6 +214,15 @@ def link_to_exit_methods(cg: nx.DiGraph,
         add_cg_link(cg, m, method)
 
 
+def print_allocation_path(path: List[EncodedMethod]):
+    print("PATH: ")
+    for item in path[:-1]:
+        print(item.name)
+        print("↓")
+    print(path[-1])
+    print()
+
+
 def get_entrypoints(methods: List[MethodClassAnalysis]):
     entrypoints: List[MethodClassAnalysis] = []
     mca:  MethodClassAnalysis
@@ -248,7 +257,8 @@ def path_exists(cg: nx.DiGraph,
         for closer in pair.closers:
             try:
                 ssp = nx.shortest_simple_paths(cg, node, closer.method)
-                if [x for x in ssp]:
+                closing_paths = [x for x in ssp]
+                if closing_paths:
                     return True
             except nx.exception.NetworkXNoPath:
                 pass
@@ -279,9 +289,5 @@ def process_paths(cg: nx.DiGraph,
     return open_paths, closed_paths
 
 
-def print_allocation_path(path: List[EncodedMethod]):
-    print("PATH: ")
-    for item in path[:-1]:
-        print(item.name)
-        print("↓")
-    print(path[-1])
+def filter_with_cg(paths: List[List[EncodedMethod]], cg_filter: nx.DiGraph):
+    return list(filter(lambda x: cg_filter.has_node(x[-2]), paths))
