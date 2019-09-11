@@ -1,6 +1,7 @@
 from typing import List, Set, Dict, Tuple, Optional, Union
 
 from androguard.core.analysis.analysis import (
+    Analysis,
     ClassAnalysis,
     ExternalMethod,
     MethodAnalysis,
@@ -175,17 +176,19 @@ def find_getCam(analysis: ClassAnalysis) -> MethodClassAnalysis:
             return meth
 
 
-def get_MethodAnalysis(method: Union[EncodedMethod, ExternalMethod]) -> MethodAnalysis:
+def get_MethodAnalysis(dx: Analysis,
+                       method: Union[EncodedMethod, ExternalMethod]
+                       ) -> MethodAnalysis:
     return dx.get_method(method)
 
 
-def get_MethodClassAnalysis(
-        method: Union[EncodedMethod, ExternalMethod]
-) -> MethodClassAnalysis:
+def get_MethodClassAnalysis(dx: Analysis,
+                            method: Union[EncodedMethod, ExternalMethod]
+                            ) -> MethodClassAnalysis:
     return dx.get_method_analysis(method)
 
 
-def search_cfg(method: MethodClassAnalysis, seen_methods) -> None:
+def search_cfg(dx: Analysis, method: MethodClassAnalysis, seen_methods: Set[str]) -> None:
     searched_cfg = False
     if method.full_name not in seen_methods:
         seen_methods.add(method.full_name)
@@ -197,90 +200,18 @@ def search_cfg(method: MethodClassAnalysis, seen_methods) -> None:
         print(len(seen_methods))
 
 
-def add_cg_link(m1, m2):
+def add_cg_link(cg: nx.DiGraph,
+                m1: EncodedMethod,
+                m2: EncodedMethod):
     if m1 and m2:
         cg.add_edge(m1, m2)
 
 
-def link_to_exit_methods(m: EncodedMethod, exit_methods):
+def link_to_exit_methods(cg: nx.DiGraph,
+                         m: EncodedMethod,
+                         exit_methods: List[EncodedMethod]):
     for method in exit_methods:
-        add_cg_link(m, method)
-
-
-class ResourceLifecycle(object):
-    def __init__(
-            self,
-            source=None,
-            allocator=None,
-            deallocator=None,
-            allocation_caller=None,
-            allocation_path=None,
-            deallocation_path=None,
-    ):
-        self.source = source
-        self.allocator = allocator
-        self.deallocator = deallocator
-        self.allocation_caller = allocation_caller
-        self.allocation_path = allocation_path
-        self.deallocation_path = deallocation_path
-
-    def add_deallocation_path(self, path_generator):
-        try:
-            for path in path_generator:
-                self.deallocator = path[-1]
-                self.deallocation_path = path
-                break
-        except Exception:
-            pass
-
-    def is_closed(self):
-        if not self.deallocation_path:
-            return False
-        else:
-            return True
-
-    def get_full_path(self):
-        return self.allocation_path[:-1] + self.deallocation_path
-
-    def print_lifecycle(self):
-        assert self.source is not None
-        assert self.allocator is not None
-        assert self.deallocator is not None
-        assert self.allocation_caller is not None
-        assert self.allocation_path is not None
-        assert self.deallocation_path is not None
-        if not self.is_closed():
-            print("Resource not closed: ", self.allocator)
-        else:
-            print("PATH: ")
-            for item in self.allocation_path[:-2]:
-                print(item.name)
-                print("↓")
-            print(self.allocation_caller.name, " → ", self.allocator.name)
-            for item in self.deallocation_path[1:]:
-                print("↓")
-                print(item.name)
-
-    def print_allocation_path(self):
-        assert self.allocation_path is not None
-        print("PATH: ")
-        for item in self.allocation_path[:-1]:
-            print(item.name)
-            print("↓")
-        print(self.allocation_path[-1])
-
-    def __repr__(self):
-        return (
-                str(self.source.name)
-                + " -> "
-                + str(self.allocator.name)
-                + " -> "
-                + str(self.deallocator.name)
-                + ", Branch: "
-                + str(self.allocation_caller.name)
-                + " -> "
-                + str(self.allocator.name)
-        )
+        add_cg_link(cg, m, method)
 
 
 def get_entrypoints(methods: List[MethodClassAnalysis]):
@@ -295,6 +226,7 @@ def get_entrypoints(methods: List[MethodClassAnalysis]):
 def get_opener_paths(cg: nx.DiGraph, main_mcas: List[MethodClassAnalysis], pair: Pair):
     entrypoints = get_entrypoints(main_mcas)
     opener_paths: List[List[EncodedMethod]] = []
+
     for entrypoint in entrypoints:
         for opener in pair.openers:
             try:
@@ -310,8 +242,9 @@ def path_exists(cg: nx.DiGraph,
                 pair: Pair,
                 exitpoints: List[EncodedMethod]):
     node: EncodedMethod
+
     # check if a closer is called directly from the same path
-    for node in path[:-1]:
+    for node in path:
         for closer in pair.closers:
             try:
                 ssp = nx.shortest_simple_paths(cg, node, closer.method)

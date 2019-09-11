@@ -7,6 +7,8 @@ from androguard.core.analysis.analysis import (
     MethodAnalysis,
     MethodClassAnalysis,
 )
+from androguard.core.bytecodes.apk import APK
+from androguard.core.bytecodes.dvm import DalvikVMFormat
 from androguard.core.androconf import show_logging
 from androguard.core.bytecodes.dvm import EncodedMethod
 from androguard.decompiler.dad.decompile import DvMachine
@@ -26,22 +28,30 @@ def main():
     apk_file = sys.argv[1].strip()
 
     print("Decompiling APK...")
+    apk_obj: APK
+    dalv_format: List[DalvikVMFormat]
+    dx: Analysis
     apk_obj, dalv_format, dx = misc.AnalyzeAPK(apk_file)
 
-    cg = dx.get_call_graph()
 
     print("Getting syntax tree...")
     machine = DvMachine(apk_file)
 
     ast = machine.get_ast()
 
-    resource_method_pairs = read_pair_file(dx)
 
     # get the main activity
     # This is the main activity for the app
     main_act = format_activity_name(apk_obj.get_main_activity())
     # class analysis of the main activity class
     main_analysis: ClassAnalysis = dx.get_class_analysis(main_act)
+
+    main_package = '/'.join(main_act.split('/')[:2])
+    print("Creating call graph...")
+    cg = dx.get_call_graph()
+    cg_filter = dx.get_call_graph(classname=main_package + '.*')
+
+    resource_method_pairs = read_pair_file(dx, cg_filter)
 
     print("Analyzing callbacks...")
 
