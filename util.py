@@ -9,10 +9,11 @@ from androguard.core.analysis.analysis import (
 )
 from androguard.core.bytecodes.dvm import EncodedMethod
 
-from allocatorUtil import Pair
+import allocator_util
 
 import networkx as nx
 from callback_list import callback_list as android_callback_interfaces
+
 
 # format of class name as stored in decompilation
 def format_activity_name(name):
@@ -34,17 +35,6 @@ def get_method_from_ast(methodname: str, classname: str, ast: Dict):
         if answer:
             return answer
     return None
-
-
-
-# get string name from AST of a method
-def get_method_name_from_ast(method_ast):
-    return method_ast["triple"][1]
-
-
-# get methods of a class
-def get_class_methods_ast(class_ast):
-    return class_ast["methods"]
 
 
 # recursive search of AST for checking the type of a symbol
@@ -166,51 +156,6 @@ def link_callbacks(mca: MethodClassAnalysis, dx: Analysis, ast: Dict, cg: nx.DiG
         cg.add_edge(mca.method, method_enc)
 
 
-def get_registered_callbacks(
-        classname, methodname, dx, ast, callback_list
-):
-    registered_callbacks = []
-    method_ast_body = get_method_from_ast(ast[classname], methodname)["body"]
-    method_invocs = get_method_invocations(method_ast_body)
-    for invoc in method_invocs:
-        arg_types = get_method_arg_type(invoc)
-        for typ in arg_types:
-            cls: ClassAnalysis = dx.get_class_analysis(typ)
-            if isinstance(cls, ClassAnalysis):
-                for interface in cls.implements:
-                    if interface in callback_list:
-                        print(
-                            "Found registered resource: ", typ, "implements ", interface
-                        )
-                        registered_callbacks.append((typ, interface))
-    return registered_callbacks
-
-
-class JavaMethod(object):
-    def __init__(self, name):
-        self.name = name
-        self.args = list()
-        self.ret_type = None
-
-    def add_arg(self, arg):
-        self.args.append(arg)
-
-    def __repr__(self):
-        return "Method " + self.name + ", Args " + str(self.args)
-
-
-class JavaInterface(object):
-    def __init__(self, name):
-        self.name = name
-        self.methods = list()
-
-    def add_method(self, method):
-        self.methods.append(method)
-
-    def __repr__(self):
-        return self.name + ": " + str(self.methods)
-
-
 def get_cb_methods():
     interface_to_methods = {}
 
@@ -250,37 +195,6 @@ def find_method(analysis: ClassAnalysis, name: str) -> MethodClassAnalysis:
     return None
 
 
-def find_getCam(analysis: ClassAnalysis) -> MethodClassAnalysis:
-    meth: MethodClassAnalysis
-    for meth in analysis.get_methods():
-        if meth.name == "getCameraInstance":
-            return meth
-
-
-def get_MethodAnalysis(dx: Analysis,
-                       method: Union[EncodedMethod, ExternalMethod]
-                       ) -> MethodAnalysis:
-    return dx.get_method(method)
-
-
-def get_MethodClassAnalysis(dx: Analysis,
-                            method: Union[EncodedMethod, ExternalMethod]
-                            ) -> MethodClassAnalysis:
-    return dx.get_method_analysis(method)
-
-
-def search_cfg(dx: Analysis, method: MethodClassAnalysis, seen_methods: Set[str]) -> None:
-    searched_cfg = False
-    if method.full_name not in seen_methods:
-        seen_methods.add(method.full_name)
-        for _, call, _ in method.get_xref_to():
-            for i in dx.find_methods(methodname=call.name, classname=call.class_name):
-                searched_cfg = True
-                search_cfg(i, set(seen_methods))
-    if not searched_cfg:
-        print(len(seen_methods))
-
-
 def add_cg_link(cg: nx.DiGraph,
                 m1: EncodedMethod,
                 m2: EncodedMethod):
@@ -313,7 +227,7 @@ def get_entrypoints(methods: List[MethodClassAnalysis]):
     return entrypoints
 
 
-def get_opener_paths(cg: nx.DiGraph, main_mcas: List[MethodClassAnalysis], pair: Pair):
+def get_opener_paths(cg: nx.DiGraph, main_mcas: List[MethodClassAnalysis], pair: allocator_util.Pair):
     entrypoints = get_entrypoints(main_mcas)
     opener_paths: List[List[EncodedMethod]] = []
 
@@ -329,7 +243,7 @@ def get_opener_paths(cg: nx.DiGraph, main_mcas: List[MethodClassAnalysis], pair:
 
 def path_exists(cg: nx.DiGraph,
                 path: List[EncodedMethod],
-                pair: Pair,
+                pair: allocator_util.Pair,
                 exitpoints: List[EncodedMethod]):
     node: EncodedMethod
     # check if a closer is called directly from the same path
@@ -357,7 +271,7 @@ def path_exists(cg: nx.DiGraph,
 
 def process_paths(cg: nx.DiGraph,
                   opener_paths: List[List[EncodedMethod]],
-                  pair: Pair,
+                  pair: allocator_util.Pair,
                   exitpoints: List[EncodedMethod]):
     open_paths = []
     closed_paths = []
@@ -371,3 +285,30 @@ def process_paths(cg: nx.DiGraph,
 
 def filter_with_cg(paths: List[List[EncodedMethod]], cg_filter: nx.DiGraph):
     return list(filter(lambda x: cg_filter.has_node(x[-2]), paths))
+
+
+class JavaMethod(object):
+    def __init__(self, name):
+        self.name = name
+        self.args = list()
+        self.ret_type = None
+
+    def add_arg(self, arg):
+        self.args.append(arg)
+
+    def __repr__(self):
+        return "Method " + self.name + ", Args " + str(self.args)
+
+
+class JavaInterface(object):
+    def __init__(self, name):
+        self.name = name
+        self.methods = list()
+
+    def add_method(self, method):
+        self.methods.append(method)
+
+    def __repr__(self):
+        return self.name + ": " + str(self.methods)
+
+
