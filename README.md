@@ -1,5 +1,4 @@
-** Remembrall **
-** Detection of Android resource leaks using static analysis **
+** Detection of Android resource leaks using static analysis
 
 How to run (Python 3.5+): 
 ```
