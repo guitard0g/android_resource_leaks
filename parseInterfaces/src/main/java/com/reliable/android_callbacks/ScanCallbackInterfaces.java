@@ -17,9 +17,7 @@ import java.nio.charset.Charset;
 import java.nio.file.*;
 import java.util.*;
 
-/**
- * Some code that uses JavaParser.
- */
+
 public class ScanCallbackInterfaces {
     public static void main(String[] args) throws IOException {
         // file of callback interfaces
@@ -38,7 +36,6 @@ public class ScanCallbackInterfaces {
                 int splitIndex = currentLine.lastIndexOf('.');
                 if (splitIndex == -1)
                     continue; // broken String, don't bother
-
 
                 // path.to.package.InterfaceName$PossibleSubInterface
                 packagePath = currentLine.substring(0, splitIndex);
@@ -77,11 +74,11 @@ public class ScanCallbackInterfaces {
         System.out.println("all done");
     }
 
+
     public static Map<String, List<MethodDeclaration>> scanCallbackInterfaces(
             Path sourceDir,
             ArrayList<InterfaceName> interfaces
     ) {
-
         SourceRoot sourceRoot = new SourceRoot(sourceDir);
         Map<String, List<MethodDeclaration>> interfaceToMethod = new HashMap<>();
 
