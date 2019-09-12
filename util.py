@@ -12,6 +12,7 @@ from androguard.core.bytecodes.dvm import EncodedMethod
 from allocatorUtil import Pair
 
 import networkx as nx
+from callback_list import callback_list as android_callback_interfaces
 
 # format of class name as stored in decompilation
 def format_activity_name(name):
@@ -19,10 +20,21 @@ def format_activity_name(name):
 
 
 # search AST for a specific method name
-def get_method_from_ast(class_ast, name):
+def get_method_from_ast(methodname: str, classname: str, ast: Dict):
+    try:
+        class_ast = ast[classname]
+    except KeyError:
+        return None
     for method in class_ast["methods"]:
-        if method["triple"][1] == name:
+        if method["triple"][1] == methodname:
             return method
+    for interface in class_ast['interfaces']:
+        interface_name, _ = interface[1]
+        answer = get_method_from_ast(methodname, format_activity_name(interface_name), ast)
+        if answer:
+            return answer
+    return None
+
 
 
 # get string name from AST of a method
@@ -45,7 +57,13 @@ def get_ast_type(ast):
     if node_type == "FieldAccess":
         return get_ast_type(ast[2][2])
     if node_type == "ClassInstanceCreation":
-        return get_ast_type(ast[1][0])
+        # ClassInstanceCreation has the format:
+        # [
+        #   'ClassInstanceCreation',
+        #   arg1_ast, arg2_ast, ...,
+        #   ['TypeName', (actual_type_string, integer)],
+        # ]
+        return ast[2][1][0]
     if node_type == "Cast":
         return get_ast_type(ast[1][0])
     if node_type == "Local":
@@ -83,6 +101,69 @@ def get_method_invocations(ast):
             if isinstance(item, list):
                 ret.extend(get_method_invocations(item))
     return ret
+
+
+def get_callback_list(mca: MethodClassAnalysis, dx: Analysis, ast: Dict, callback_interfaces: List):
+    classname: str = mca.method.class_name
+    methodname: str = mca.name
+    method_ast = get_method_from_ast(methodname, classname, ast)
+    if method_ast:
+        method_ast_body = method_ast['body']
+    else:
+        return []
+    method_invocs = get_method_invocations(method_ast_body)
+
+    registered_callbacks = []
+    for invoc in method_invocs:
+        arg_types = get_method_arg_type(invoc)
+        for typ in arg_types:
+            cls: ClassAnalysis = dx.get_class_analysis(typ)
+            if isinstance(cls, ClassAnalysis):
+                for interface in cls.implements:
+                    if interface in callback_interfaces:
+                        print(
+                            "Found registered resource: ", typ, "implements ", interface
+                        )
+                        registered_callbacks.append((typ, interface))
+
+    return registered_callbacks
+
+
+def link_callbacks(mca: MethodClassAnalysis, dx: Analysis, ast: Dict, cg: nx.DiGraph):
+    android_api_callbacks = get_cb_methods()
+    invoked_callback_registers = get_callback_list(mca, dx, ast, android_callback_interfaces)
+
+    def is_android_api_callback(callback_tuple):
+        _, interface = callback_tuple
+        if interface in android_api_callbacks:
+            return True
+        return False
+
+    invoked_callback_registers = filter(is_android_api_callback, invoked_callback_registers)
+
+    found_methods = list()
+    for cb_typ, cb_interface in invoked_callback_registers:
+        java_interface: JavaInterface = android_api_callbacks[cb_interface]
+        interface_method: JavaMethod
+
+        # Try to find the analysis for the interface methods.
+        # This should be successful if an interface method is
+        # used by any user code, but I'll need to verify edge cases.
+        for interface_method in java_interface.methods:
+            gen = dx.find_methods(
+                classname=cb_typ, methodname=".*{}.*".format(interface_method.name)
+            )
+            analysis: MethodClassAnalysis
+            found = False
+            for item in gen:
+                analysis = item
+                found = True
+            if found:
+                found_methods.append(analysis.method)
+
+    for method_enc in found_methods:
+        print("adding edge: ", mca.name, " -> ", method_enc.name)
+        cg.add_edge(mca.method, method_enc)
 
 
 def get_registered_callbacks(
@@ -251,7 +332,6 @@ def path_exists(cg: nx.DiGraph,
                 pair: Pair,
                 exitpoints: List[EncodedMethod]):
     node: EncodedMethod
-
     # check if a closer is called directly from the same path
     for node in path:
         for closer in pair.closers:
