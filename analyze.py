@@ -86,7 +86,7 @@ def main():
         if opener_paths:
             open_paths, closed_paths = util.process_paths(cg, opener_paths, pair, exit_methods)
             if open_paths:
-                # print out all the paths
+                # print out all the paths that haven't been closed
                 for path in open_paths:
                     util.print_allocation_path(path)
 
