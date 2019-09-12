@@ -21,7 +21,3 @@ Be sure to source your virtual environment if you are using it to run analyze.py
 
 You will be prompted for an APK file to analyze. The analysis may take
 some time to run its course, as decompilation takes some time.
-
-Two example apks are included, called "app-debug.apk" and "app-debug-bad.apk". 
-These are two simple apks that utilize the camera resource, one with proper
-resource management and one without.
