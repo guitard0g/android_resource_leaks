@@ -113,6 +113,7 @@ Landroid.*/view/InputDevice; ## enable ## disable
 Landroid.*/drm/DrmManagerClient; ## openConvertSession ## closeConvertSession
 Landroid.*/net/wifi/WifiNetworkScoreCache; ## registerListener ## unregisterListener
 Landroid.*/database/sqlite/SQLiteDatabase; ## enableWriteAheadLogging ## disableWriteAheadLogging
+Landroidx.*/sqlite/db/SupportSQLiteOpenHelper; ## getWritableDatabase ## close
 Landroid.*/media/AudioManager; ## registerAudioPlaybackCallback ## unregisterAudioPlaybackCallback
 Landroid.*/nfc/dta/NfcDta; ## enableClient ## disableClient
 Landroid.*/media/MediaRecorder; ## start ## stop

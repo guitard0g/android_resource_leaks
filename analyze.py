@@ -31,6 +31,7 @@ def main():
     apk_obj, dalv_format, dx = misc.AnalyzeAPK(apk_file)
 
 
+
     print("Getting syntax tree...")
     machine = DvMachine(apk_file)
 
@@ -41,6 +42,8 @@ def main():
     main_act = util.format_activity_name(apk_obj.get_main_activity())
     # class analysis of the main activity class
     main_analysis: ClassAnalysis = dx.get_class_analysis(main_act)
+    write_info: util.StaticFieldWriteInfo = util.get_static_fields(main_analysis, dx)
+    field_pairs: List[allocator_util.Pair] = allocator_util.Pair.from_write_info(write_info)
 
     main_package_pattern = '/'.join(main_act.split('/')[:2]) + '.*'
     print("Creating call graph...")
@@ -89,6 +92,21 @@ def main():
                 # print out all the paths that haven't been closed
                 for path in open_paths:
                     util.print_allocation_path(path)
+
+    for pair in field_pairs:
+        opener_paths = util.get_opener_paths(cg, main_mcas, pair)
+        if opener_paths:
+            open_paths, closed_paths = util.process_paths(cg, opener_paths, pair, exit_methods)
+            if closed_paths:
+                print("CLOSED PATHS: ")
+                for path in closed_paths:
+                    util.print_field_set_path(path, pair.field)
+
+            if open_paths:
+                print("OPEN PATHS: ")
+                # print out all the paths that haven't been closed
+                for path in open_paths:
+                    util.print_field_set_path(path, pair.field)
 
 
 if __name__ == '__main__':

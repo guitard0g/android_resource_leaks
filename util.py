@@ -1,18 +1,53 @@
 from typing import List, Set, Dict, Tuple, Optional, Union
+from collections import defaultdict
 
 from androguard.core.analysis.analysis import (
     Analysis,
     ClassAnalysis,
     ExternalMethod,
     MethodAnalysis,
+    FieldClassAnalysis,
     MethodClassAnalysis,
 )
-from androguard.core.bytecodes.dvm import EncodedMethod
+from androguard.core.bytecodes.dvm import EncodedMethod, DalvikCode, Instruction, Instruction11n, Instruction21c
 
 import allocator_util
 
 import networkx as nx
 from callback_list import callback_list as android_callback_interfaces
+
+EncodedClearsSets = Tuple[List[EncodedMethod], List[EncodedMethod]]
+ClearsSets = Tuple[List[MethodClassAnalysis], List[MethodClassAnalysis]]
+StaticFieldWriteInfo = Dict[FieldClassAnalysis, ClearsSets]
+
+STATIC_FLAG = 0x8
+SPUT_OBJECT_CODE = 105
+CONST_4_CODE = 18
+
+
+class JavaMethod(object):
+    def __init__(self, name):
+        self.name = name
+        self.args = list()
+        self.ret_type = None
+
+    def add_arg(self, arg):
+        self.args.append(arg)
+
+    def __repr__(self):
+        return "Method " + self.name + ", Args " + str(self.args)
+
+
+class JavaInterface(object):
+    def __init__(self, name):
+        self.name = name
+        self.methods = list()
+
+    def add_method(self, method):
+        self.methods.append(method)
+
+    def __repr__(self):
+        return self.name + ": " + str(self.methods)
 
 
 # format of class name as stored in decompilation
@@ -41,7 +76,12 @@ def get_method_from_ast(methodname: str, classname: str, ast: Dict):
 def get_ast_type(ast):
     if isinstance(ast, str):
         return ast
-    node_type = ast[0]
+    try:
+        node_type = ast[0]
+    except Exception:
+        # we have an ill-formed AST
+        return None
+
     if node_type == "MethodInvocation":
         return get_ast_type(ast[2][2])
     if node_type == "FieldAccess":
@@ -218,6 +258,15 @@ def print_allocation_path(path: List[EncodedMethod]):
     print()
 
 
+def print_field_set_path(path: List[EncodedMethod], field: FieldClassAnalysis):
+    print("FIELD PATH ({}): ".format(field.name))
+    for item in path[:-1]:
+        print(item.name)
+        print("↓")
+    print(path[-1])
+    print()
+
+
 def get_entrypoints(methods: List[MethodClassAnalysis]):
     entrypoints: List[MethodClassAnalysis] = []
     mca:  MethodClassAnalysis
@@ -287,28 +336,55 @@ def filter_with_cg(paths: List[List[EncodedMethod]], cg_filter: nx.DiGraph):
     return list(filter(lambda x: cg_filter.has_node(x[-2]), paths))
 
 
-class JavaMethod(object):
-    def __init__(self, name):
-        self.name = name
-        self.args = list()
-        self.ret_type = None
-
-    def add_arg(self, arg):
-        self.args.append(arg)
-
-    def __repr__(self):
-        return "Method " + self.name + ", Args " + str(self.args)
+def is_static(field: FieldClassAnalysis):
+    return STATIC_FLAG & field.get_field().access_flags == STATIC_FLAG
 
 
-class JavaInterface(object):
-    def __init__(self, name):
-        self.name = name
-        self.methods = list()
+def field_cleared(method: EncodedMethod, field: FieldClassAnalysis) -> bool:
+    """Approximate if this field is set to null in the given method"""
+    instructions: List[Instruction] = [x for x in method.get_instructions()]
+    # map of register num to its literal value given
+    register_vals = defaultdict(lambda: -1)
+    # the register used to set the object value
+    obj_val = -1
+    for instruction in instructions:
+        if instruction.get_op_value() == CONST_4_CODE:
+            instruction: Instruction11n
+            register_vals[instruction.A] = instruction.B
+        elif instruction.get_op_value() == SPUT_OBJECT_CODE:
+            instruction: Instruction21c
+            if instruction.BBBB == field.get_field().field_idx:
+                obj_val = register_vals[instruction.AA]
 
-    def add_method(self, method):
-        self.methods.append(method)
-
-    def __repr__(self):
-        return self.name + ": " + str(self.methods)
+    if obj_val == 0:
+        return True
+    return False
 
 
+def check_writes(field: FieldClassAnalysis) -> EncodedClearsSets:
+    clears = []
+    sets = []
+    method: EncodedMethod
+    for _, method in field.get_xref_write():
+        if field_cleared(method, field):
+            clears.append(method)
+        else:
+            sets.append(method)
+
+    return clears, sets
+
+
+def decode_clear_sets(cs: EncodedClearsSets, dx: Analysis) -> ClearsSets:
+    clears, sets = cs
+    clears: List[MethodClassAnalysis] = [dx.get_method_analysis(x) for x in clears]
+    sets: List[MethodClassAnalysis] = [dx.get_method_analysis(x) for x in sets]
+    return clears, sets
+
+
+def get_static_fields(ca: ClassAnalysis, dx: Analysis) -> StaticFieldWriteInfo:
+    field_to_writes: StaticFieldWriteInfo = {}
+    fields = [x for x in ca.get_fields()]
+    field: FieldClassAnalysis
+    for field in filter(is_static, fields):
+        field_to_writes[field] = decode_clear_sets(check_writes(field), dx)
+    return field_to_writes
